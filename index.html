@@ -368,6 +368,78 @@ main{max-width:1400px;margin:auto}
   .instagram-footer-btn{min-width:0;width:min(340px,100%);padding:14px 18px;}
 }
 
+
+
+/* ============================================================
+   MUSIC CREATIONS · DROPS — novedades internas automáticas
+   Módulo visual independiente. No interviene en audio ni PWA.
+   ============================================================ */
+.drops-bell svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.drops-bell.has-unread{border-color:rgba(212,166,87,.72);color:var(--gold2);box-shadow:0 0 0 1px rgba(212,166,87,.08),0 0 26px rgba(212,166,87,.10)}
+.drops-bell.has-unread:after{content:"";position:absolute;inset:-3px;border:1px solid rgba(212,166,87,.34);animation:dropsPulse 2s ease-out infinite;pointer-events:none}
+@keyframes dropsPulse{0%{opacity:.85;transform:scale(.92)}70%,100%{opacity:0;transform:scale(1.22)}}
+
+.drops-alert{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));z-index:285;width:min(460px,calc(100vw - 28px));background:linear-gradient(145deg,rgba(24,32,19,.985),rgba(7,10,7,.995));border:1px solid rgba(212,166,87,.72);box-shadow:0 30px 100px rgba(0,0,0,.76),0 0 60px rgba(212,166,87,.08);padding:18px;opacity:0;visibility:hidden;transform:translateY(26px) scale(.985);transition:opacity .32s ease,transform .32s ease,visibility .32s}
+.drops-alert.show{opacity:1;visibility:visible;transform:none}
+.drops-alert:before{content:"";position:absolute;left:0;top:0;width:44%;height:1px;background:linear-gradient(90deg,var(--gold2),transparent)}
+.drops-alert-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px}
+.drops-alert-kicker,.drops-center-kicker{font:700 9px "Space Mono",monospace;letter-spacing:.18em;color:var(--gold);text-transform:uppercase}
+.drops-alert h3{font:600 clamp(1.15rem,3.8vw,1.55rem) Cinzel,serif;color:var(--gold2);line-height:1.15;margin:6px 0 5px}
+.drops-alert-copy{font-size:.98rem;color:var(--muted);line-height:1.4}
+.drops-close{flex:0 0 auto;width:34px;height:34px;border:1px solid var(--line);background:rgba(0,0,0,.24);color:var(--paper);cursor:pointer;font-size:18px}
+.drops-close:hover{border-color:var(--gold);color:var(--gold2)}
+.drops-cover-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:15px 0 14px}
+.drops-cover{aspect-ratio:1;overflow:hidden;position:relative;background:#11170e;border:1px solid rgba(212,166,87,.16)}
+.drops-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.drops-cover.more:after{content:attr(data-more);position:absolute;inset:0;display:grid;place-items:center;background:rgba(3,5,3,.70);backdrop-filter:blur(2px);color:var(--gold2);font:700 13px "Space Mono",monospace;letter-spacing:.05em}
+.drops-alert-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.drops-primary,.drops-secondary{border:1px solid var(--gold);padding:10px 13px;cursor:pointer;font:700 9px "Space Mono",monospace;letter-spacing:.12em;text-transform:uppercase}
+.drops-primary{background:var(--gold);color:#080a08}
+.drops-primary:hover{box-shadow:0 0 28px rgba(212,166,87,.20)}
+.drops-secondary{background:transparent;color:var(--muted);border-color:var(--line)}
+.drops-secondary:hover{color:var(--paper);border-color:#6b5a3b}
+.drops-alert-note{margin-top:11px;padding-top:10px;border-top:1px solid var(--line);font:8px "Space Mono",monospace;letter-spacing:.08em;color:#7e806f}
+
+.drops-center{position:fixed;inset:0;z-index:290;background:rgba(3,4,3,.90);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:18px}
+.drops-center.open{display:flex;animation:dropsFade .18s ease-out}
+@keyframes dropsFade{from{opacity:0}to{opacity:1}}
+.drops-center-card{width:min(920px,100%);max-height:min(86vh,900px);display:flex;flex-direction:column;background:linear-gradient(180deg,#151c11,#080b07);border:1px solid rgba(212,166,87,.72);box-shadow:0 45px 140px rgba(0,0,0,.84);position:relative;overflow:hidden}
+.drops-center-card:before{content:"";position:absolute;inset:0 0 auto 0;height:150px;background:radial-gradient(circle at 20% -30%,rgba(212,166,87,.17),transparent 48%);pointer-events:none}
+.drops-center-head{position:relative;padding:24px 24px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+.drops-center-title{font:600 clamp(1.45rem,5vw,2.4rem) Cinzel,serif;color:var(--gold2);margin:5px 0 6px;line-height:1.08}
+.drops-center-sub{color:var(--muted);font-size:1rem;line-height:1.45}
+.drops-center-count{font:700 10px "Space Mono",monospace;letter-spacing:.12em;color:var(--gold);white-space:nowrap;margin-top:4px}
+.drops-center-body{overflow:auto;padding:18px 24px 24px;overscroll-behavior:contain}
+.drops-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.drop-item{display:grid;grid-template-columns:72px 1fr auto;gap:12px;align-items:center;padding:10px;border:1px solid var(--line);background:rgba(255,255,255,.018);transition:.2s}
+.drop-item:hover{border-color:rgba(212,166,87,.50);background:rgba(212,166,87,.035)}
+.drop-item-cover{width:72px;aspect-ratio:1;overflow:hidden;background:#11170e}
+.drop-item-cover img{width:100%;height:100%;object-fit:cover;display:block}
+.drop-item-info{min-width:0}
+.drop-item-info strong{display:block;color:var(--paper);font:600 13px Cinzel,serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.drop-item-info span{display:block;margin-top:5px;color:var(--gold);font:8px "Space Mono",monospace;letter-spacing:.09em;text-transform:uppercase}
+.drop-play{width:38px;height:38px;border:1px solid rgba(212,166,87,.45);background:rgba(212,166,87,.06);color:var(--gold2);cursor:pointer}
+.drop-play:hover{background:var(--gold);color:#080a08}
+.drops-empty{border:1px solid var(--line);padding:34px;text-align:center;color:var(--muted);font-size:1rem}
+.drops-center-foot{padding:12px 24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;align-items:center;color:#7e806f;font:8px "Space Mono",monospace;letter-spacing:.08em}
+.drops-center-foot button{border:0;background:transparent;color:var(--gold);font:700 9px "Space Mono",monospace;letter-spacing:.1em;cursor:pointer}
+
+@media(max-width:720px){
+  .drops-alert{right:14px;left:14px;width:auto;bottom:14px;padding:15px}
+  .drops-cover-strip{gap:4px}
+  .drops-alert-actions{display:grid;grid-template-columns:1fr 1fr}
+  .drops-primary,.drops-secondary{width:100%}
+  .drops-center{padding:0;align-items:flex-end}
+  .drops-center-card{width:100%;max-height:91vh;border-left:0;border-right:0;border-bottom:0}
+  .drops-center-head{padding:20px 16px 14px}
+  .drops-center-body{padding:14px 14px 22px}
+  .drops-grid{grid-template-columns:1fr}
+  .drop-item{grid-template-columns:62px 1fr 38px;padding:8px}
+  .drop-item-cover{width:62px}
+  .drops-center-count{display:none}
+  .drops-center-foot{padding:11px 16px}
+}
+
 </style>
 
 <style id="mobile-responsive-professional-fix">
@@ -904,15 +976,10 @@ img, video, canvas, svg { max-width:100%; }
     <select id="language" class="filter"><option>Todos</option><option>Spanish</option><option>English</option></select>
     <a class="social-btn" id="instagramLink" href="https://www.instagram.com/bertoantn23/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Berto Antúnez" title="Instagram · @bertoantn23"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5A4.5 4.5 0 1 1 12 16.5 4.5 4.5 0 0 1 12 7.5Zm0 2A2.5 2.5 0 1 0 12 14.5 2.5 2.5 0 0 0 12 9.5ZM17.5 6A1.5 1.5 0 1 1 17.5 9 1.5 1.5 0 0 1 17.5 6Z"/></svg><span>INSTAGRAM</span></a>
     <button class="icon-btn" id="favoritesNav" aria-label="Mis favoritos" title="Mis favoritos">♡<span class="badge hidden" id="favoritesBadge">0</span></button>
-    <div style="position:relative">
-      <button class="icon-btn" id="bell" aria-label="Novedades">♧<span class="badge" id="bellBadge">3</span></button>
-      <div class="bell-menu" id="bellMenu">
-        <h3>NOVEDADES</h3>
-        <div class="notice">Nueva etapa de <b>Music Creations</b>: biblioteca renovada y nuevo reproductor.<small>HOY</small></div>
-        <div class="notice"><b>Infinite Frontier</b> ya forma parte de la biblioteca.<small>ESTA SEMANA</small></div>
-        <div class="notice">Ahora puedes marcar canciones con <b>Me gusta</b> y dejar reseñas.<small>NUEVO</small></div>
-      </div>
-    </div>
+    <button class="icon-btn drops-bell" id="bell" type="button" aria-label="Music Creations Drops" title="Music Creations Drops">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>
+      <span class="badge hidden" id="bellBadge">0</span>
+    </button>
   </div>
 </nav>
 
@@ -947,6 +1014,43 @@ img, video, canvas, svg { max-width:100%; }
 </footer>
 
 
+
+
+<!-- MUSIC CREATIONS · DROPS — aviso automático de nuevos lanzamientos -->
+<aside class="drops-alert" id="dropsAlert" role="status" aria-live="polite" aria-label="Nuevos lanzamientos de Music Creations">
+  <div class="drops-alert-head">
+    <div>
+      <div class="drops-alert-kicker">MUSIC CREATIONS · NEW DROP</div>
+      <h3 id="dropsAlertTitle">Nuevos lanzamientos disponibles</h3>
+      <div class="drops-alert-copy" id="dropsAlertCopy">Hay nueva música esperando en tu biblioteca.</div>
+    </div>
+    <button class="drops-close" id="dropsAlertClose" type="button" aria-label="Cerrar aviso">×</button>
+  </div>
+  <div class="drops-cover-strip" id="dropsAlertCovers"></div>
+  <div class="drops-alert-actions">
+    <button class="drops-primary" id="dropsDiscover" type="button">DESCUBRIR NOVEDADES</button>
+    <button class="drops-secondary" id="dropsLater" type="button">AHORA NO</button>
+  </div>
+  <div class="drops-alert-note">DETECTADO AUTOMÁTICAMENTE · SOLO APARECE CUANDO HAY NUEVA MÚSICA</div>
+</aside>
+
+<div class="drops-center" id="dropsCenter" role="dialog" aria-modal="true" aria-labelledby="dropsCenterTitle" aria-hidden="true">
+  <section class="drops-center-card">
+    <header class="drops-center-head">
+      <div>
+        <div class="drops-center-kicker">MUSIC CREATIONS · DROPS</div>
+        <h3 class="drops-center-title" id="dropsCenterTitle">Últimos lanzamientos</h3>
+        <div class="drops-center-sub" id="dropsCenterSub">Nueva música incorporada a la plataforma.</div>
+      </div>
+      <div style="display:flex;gap:12px;align-items:flex-start">
+        <div class="drops-center-count" id="dropsCenterCount"></div>
+        <button class="drops-close" id="dropsCenterClose" type="button" aria-label="Cerrar novedades">×</button>
+      </div>
+    </header>
+    <div class="drops-center-body"><div class="drops-grid" id="dropsGrid"></div></div>
+    <footer class="drops-center-foot"><span>MUSIC CREATIONS · BERTO ANTÚNEZ</span><button id="dropsLibrary" type="button">IR A LA BIBLIOTECA ↓</button></footer>
+  </section>
+</div>
 
 <!-- PWA INSTALL DIALOG -->
 <div class="install-dialog" id="installDialog" role="dialog" aria-modal="true" aria-labelledby="installTitle">
@@ -1093,6 +1197,7 @@ const SINGLE_COVER_SG18='data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBD
 const SONGS = [];
 const SINGLES = [];
 let catalogLoaded = false;
+let CATALOG_VERSION = 0;
 
 function resolveCatalogCover(song){
   if(song.coverKey){
@@ -1109,6 +1214,7 @@ async function loadCatalog(){
     if(!res.ok) throw new Error('No se pudo cargar catalogo.json ('+res.status+')');
     const data = await res.json();
     if(!data || !Array.isArray(data.songs) || !Array.isArray(data.singles)) throw new Error('Formato de catálogo no válido');
+    CATALOG_VERSION = Number(data.version) || 0;
     const normalize = s => ({...s, cover:resolveCatalogCover(s)});
     SONGS.splice(0,SONGS.length,...data.songs.map(normalize));
     SINGLES.splice(0,SINGLES.length,...data.singles.map(normalize));
@@ -1120,11 +1226,144 @@ async function loadCatalog(){
   }
 }
 
-const NOTICES = [
-  ['Nueva etapa de Music Creations: biblioteca renovada y reproductor persistente.','HOY'],
-  ['Infinite Frontier ya forma parte de la biblioteca con sus 16 pistas y portadas individuales.','ESTA SEMANA'],
-  ['Likes, reseñas locales, aleatorio y reproducción en segundo plano.','NUEVO']
-];
+/* ============================================================
+   MUSIC CREATIONS · DROPS
+   ------------------------------------------------------------
+   - Detecta automáticamente IDs nuevos en catalogo.json.
+   - Guarda qué catálogo conocía este dispositivo en localStorage.
+   - En la primera ejecución del módulo toma como "drop" el lote con
+     la fecha addedAt más reciente, para anunciar el lanzamiento actual.
+   - No registra Service Workers, no usa Push API y no toca el audio.
+   ============================================================ */
+const DROPS_KEYS={
+  known:'mc_drops_known_ids_v1',
+  unread:'mc_drops_unread_ids_v1',
+  announced:'mc_drops_announced_batch_v1'
+};
+const dropsState={latest:[],unread:[],detected:[]};
+
+function dropsReadJSON(key,fallback){try{const v=JSON.parse(localStorage.getItem(key)||'null');return v??fallback}catch{return fallback}}
+function dropsWriteJSON(key,value){try{localStorage.setItem(key,JSON.stringify(value))}catch{}}
+function dropsDateKey(song){const raw=String(song?.addedAt||'');return /^\d{4}-\d{2}-\d{2}/.test(raw)?raw.slice(0,10):''}
+function latestCatalogBatch(){
+  const songs=allSongs();
+  const dated=songs.map(s=>({s,key:dropsDateKey(s)})).filter(x=>x.key);
+  if(dated.length){
+    const latest=dated.map(x=>x.key).sort().at(-1);
+    const batch=dated.filter(x=>x.key===latest).map(x=>x.s);
+    if(batch.length)return batch;
+  }
+  const flagged=songs.filter(s=>s.isNew);
+  return flagged.length?flagged:songs.slice(-1);
+}
+function dropsMeta(songs){
+  const genres=[...new Set(songs.map(s=>s.genre).filter(Boolean))];
+  const langs=[...new Set(songs.map(s=>s.language==='Spanish'?'Español':s.language).filter(Boolean))];
+  return [...genres.slice(0,2),...langs.slice(0,2)].join(' · ');
+}
+function dropsCoverHTML(song,extra=''){
+  const src=artworkSrc(song);
+  return `<div class="drops-cover ${extra}">${src?`<img src="${escapeHTML(src)}" alt="Portada de ${escapeHTML(song.title)}">`:'<div style="height:100%;display:grid;place-items:center;color:var(--gold);font:700 10px Space Mono,monospace">MC</div>'}</div>`;
+}
+function updateDropsBadge(){
+  const badge=document.getElementById('bellBadge'),bell=document.getElementById('bell');
+  const n=dropsState.unread.length;
+  if(badge){badge.textContent=n>99?'99+':String(n);badge.classList.toggle('hidden',n===0)}
+  if(bell)bell.classList.toggle('has-unread',n>0);
+}
+function markDropsRead(ids){
+  const done=new Set(ids||[]);
+  dropsState.unread=dropsState.unread.filter(s=>!done.has(s.id));
+  dropsWriteJSON(DROPS_KEYS.unread,dropsState.unread.map(s=>s.id));
+  updateDropsBadge();
+}
+function closeDropsAlert(){document.getElementById('dropsAlert')?.classList.remove('show')}
+function renderDropsAlert(songs){
+  const alert=document.getElementById('dropsAlert');if(!alert||!songs.length)return;
+  const n=songs.length;
+  document.getElementById('dropsAlertTitle').textContent=n===1?'Nuevo lanzamiento disponible':`${n} nuevos lanzamientos disponibles`;
+  const names=songs.slice(0,3).map(s=>s.title).join(' · ');
+  document.getElementById('dropsAlertCopy').textContent=`${dropsMeta(songs)}${names?' — '+names:''}${n>3?` +${n-3} más`:''}`;
+  const covers=document.getElementById('dropsAlertCovers');
+  const shown=songs.slice(0,4);
+  covers.innerHTML=shown.map((s,i)=>{
+    const more=n>4&&i===3?`more`:'';
+    const html=dropsCoverHTML(s,more);
+    return more?html.replace('class="drops-cover more"',`class="drops-cover more" data-more="+${n-3}"`):html;
+  }).join('');
+  alert.classList.add('show');
+}
+function renderDropsCenter(songs){
+  const list=songs.length?songs:dropsState.latest;
+  const title=document.getElementById('dropsCenterTitle'),sub=document.getElementById('dropsCenterSub'),count=document.getElementById('dropsCenterCount'),grid=document.getElementById('dropsGrid');
+  const n=list.length;
+  if(title)title.textContent=n===1?'Último lanzamiento':`${n} lanzamientos en el último Drop`;
+  if(sub)sub.textContent=n?`${dropsMeta(list)} · Toca ▶ para escuchar directamente.`:'No hay novedades pendientes.';
+  if(count)count.textContent=n?`${n} ${n===1?'TEMA':'TEMAS'}`:'';
+  if(!grid)return;
+  if(!n){grid.innerHTML='<div class="drops-empty">No hay nuevos lanzamientos pendientes. La campana se iluminará automáticamente cuando el catálogo incorpore nueva música.</div>';return}
+  grid.innerHTML=list.map(s=>{
+    const src=artworkSrc(s);
+    const art=src?`<img src="${escapeHTML(src)}" alt="Portada de ${escapeHTML(s.title)}">`:'<div style="height:100%;display:grid;place-items:center;color:var(--gold);font:700 9px Space Mono,monospace">MC</div>';
+    return `<article class="drop-item"><div class="drop-item-cover">${art}</div><div class="drop-item-info"><strong>${escapeHTML(s.title)}</strong><span>${escapeHTML(s.genre||'')} · ${escapeHTML(s.language==='Spanish'?'Español':s.language||'')} · ${escapeHTML(s.album||'Single')}</span></div><button class="drop-play" type="button" data-drop-play="${escapeHTML(s.id)}" aria-label="Reproducir ${escapeHTML(s.title)}">▶</button></article>`;
+  }).join('');
+  grid.querySelectorAll('[data-drop-play]').forEach(btn=>btn.addEventListener('click',()=>{
+    const id=btn.dataset.dropPlay;
+    markDropsRead([id]);
+    closeDropsCenter();
+    openSong(id,true);
+  }));
+}
+function openDropsCenter(){
+  const center=document.getElementById('dropsCenter');if(!center)return;
+  const unreadBefore=[...dropsState.unread];
+  renderDropsCenter(unreadBefore.length?unreadBefore:dropsState.latest);
+  center.classList.add('open');center.setAttribute('aria-hidden','false');
+  closeDropsAlert();
+  if(unreadBefore.length)markDropsRead(unreadBefore.map(s=>s.id));
+}
+function closeDropsCenter(){const center=document.getElementById('dropsCenter');if(center){center.classList.remove('open');center.setAttribute('aria-hidden','true')}}
+function initDrops(){
+  const songs=allSongs();if(!songs.length)return;
+  const currentIds=songs.map(s=>s.id);
+  const known=dropsReadJSON(DROPS_KEYS.known,null);
+  const previousUnread=dropsReadJSON(DROPS_KEYS.unread,[]);
+  let detected=[];
+  if(Array.isArray(known)&&known.length){
+    const old=new Set(known);detected=songs.filter(s=>!old.has(s.id));
+  }else{
+    detected=latestCatalogBatch();
+  }
+  const currentSet=new Set(currentIds);
+  const unreadIds=[...new Set([...(Array.isArray(previousUnread)?previousUnread:[]),...detected.map(s=>s.id)])].filter(id=>currentSet.has(id));
+  const byId=new Map(songs.map(s=>[s.id,s]));
+  dropsState.latest=latestCatalogBatch();
+  dropsState.detected=detected;
+  dropsState.unread=unreadIds.map(id=>byId.get(id)).filter(Boolean);
+  dropsWriteJSON(DROPS_KEYS.known,currentIds);
+  dropsWriteJSON(DROPS_KEYS.unread,dropsState.unread.map(s=>s.id));
+  updateDropsBadge();
+
+  const bell=document.getElementById('bell');
+  const center=document.getElementById('dropsCenter');
+  bell?.addEventListener('click',openDropsCenter);
+  document.getElementById('dropsCenterClose')?.addEventListener('click',closeDropsCenter);
+  center?.addEventListener('click',e=>{if(e.target===center)closeDropsCenter()});
+  document.getElementById('dropsAlertClose')?.addEventListener('click',closeDropsAlert);
+  document.getElementById('dropsLater')?.addEventListener('click',closeDropsAlert);
+  document.getElementById('dropsDiscover')?.addEventListener('click',openDropsCenter);
+  document.getElementById('dropsLibrary')?.addEventListener('click',()=>{closeDropsCenter();document.getElementById('library')?.scrollIntoView({behavior:'smooth',block:'start'})});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeDropsAlert();closeDropsCenter()}});
+
+  if(detected.length){
+    const fingerprint=`${CATALOG_VERSION}|${detected.map(s=>s.id).sort().join(',')}`;
+    let announced='';try{announced=localStorage.getItem(DROPS_KEYS.announced)||''}catch{}
+    if(announced!==fingerprint){
+      try{localStorage.setItem(DROPS_KEYS.announced,fingerprint)}catch{}
+      setTimeout(()=>renderDropsAlert(detected),900);
+    }
+  }
+}
 
 const state = {
   search:'', genre:'Todos', language:'Todos', current:null, index:0,
@@ -1543,9 +1782,6 @@ function initNav(){
   document.getElementById('search').addEventListener('input',e=>{state.search=e.target.value;render()});
   document.getElementById('genre').addEventListener('change',e=>{state.genre=e.target.value;render()});
   document.getElementById('language').addEventListener('change',e=>{state.language=e.target.value;render()});
-  const bell=document.getElementById('bell'),menu=document.getElementById('bellMenu');
-  bell.addEventListener('click',e=>{e.stopPropagation();menu.classList.toggle('open');document.getElementById('bellBadge').classList.add('hidden')});
-  document.addEventListener('click',e=>{if(!menu.contains(e.target)&&e.target!==bell)menu.classList.remove('open')});
 }
 
 function initAudio(){
@@ -1607,7 +1843,7 @@ async function init(){
   }
   queueLoad();
   initHistory();
-  initNav();initAudio();initMediaSession();keepPlaybackOnBackground();render();
+  initNav();initAudio();initMediaSession();keepPlaybackOnBackground();render();initDrops();
   document.getElementById('enterBtn').addEventListener('click',()=>{
     document.getElementById('library').scrollIntoView({behavior:'smooth'});
     if(!state.current)openSong(allSongs()[0].id,true);
