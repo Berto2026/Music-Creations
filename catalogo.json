@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 5,
   "artist": "Berto Antúnez",
   "songs": [
     {
@@ -283,14 +283,14 @@
       "language": "Spanish",
       "album": "",
       "audio": "18-el-sol-del-valle.mp3",
-      "coverKey": "SINGLE_COVER_SG18",
       "tags": [
         "Pop",
         "Español"
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-08-25T00:00:00+02:00"
+      "addedAt": "2026-08-25T00:00:00+02:00",
+      "cover": "covers/18-el-sol-del-valle.jpeg"
     },
     {
       "id": "sg19",
@@ -675,6 +675,38 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg43",
+      "title": "PÁJAROS DE CRISTAL (LA INFANCIA OLVIDADA)",
+      "genre": "Pop",
+      "language": "Spanish",
+      "album": "",
+      "audio": "43-pajaros-de-cristal-la-infancia-olvidada.mp3",
+      "cover": "covers/43-pajaros-de-cristal-la-infancia-olvidada.jpeg",
+      "tags": [
+        "Pop",
+        "Spanish"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T11:42:00+02:00"
+    },
+    {
+      "id": "sg44",
+      "title": "EL ARTE DE DESAPARECER",
+      "genre": "Pop",
+      "language": "Spanish",
+      "album": "",
+      "audio": "44-el-arte-de-desaparecer.mp3",
+      "cover": "covers/44-el-arte-de-desaparecer.jpeg",
+      "tags": [
+        "Pop",
+        "Spanish"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T11:42:00+02:00"
     }
   ]
 }
