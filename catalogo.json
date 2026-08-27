@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 3,
   "artist": "Berto Antúnez",
   "songs": [
     {
@@ -291,6 +291,390 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-25T00:00:00+02:00"
+    },
+    {
+      "id": "sg19",
+      "title": "REWRITING THE NIGHT SKY",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "19-rewriting-the-night-sky.mp3",
+      "cover": "covers/19-rewriting-the-night-sky.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg20",
+      "title": "ONEIRIC LANDSCAPES",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "20-oneiric-landscapes.mp3",
+      "cover": "covers/20-oneiric-landscapes.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg21",
+      "title": "HYPERSONIC GODS",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "21-hypersonic-gods.mp3",
+      "cover": "covers/21-hypersonic-gods.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg22",
+      "title": "SILICONE SOULS",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "22-silicone-souls.mp3",
+      "cover": "covers/22-silicone-souls.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg23",
+      "title": "ORDINARY GIANTS",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "23-ordinary-giants.mp3",
+      "cover": "covers/23-ordinary-giants.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg24",
+      "title": "THE PRICE OF TOMORROW",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "24-the-price-of-tomorrow.mp3",
+      "cover": "covers/24-the-price-of-tomorrow.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg25",
+      "title": "SANCTUARY ON A LOOP",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "25-sanctuary-on-a-loop.mp3",
+      "cover": "covers/25-sanctuary-on-a-loop.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg26",
+      "title": "THE GREEN DELIVERANCE",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "26-the-green-deliverance.mp3",
+      "cover": "covers/26-the-green-deliverance.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg27",
+      "title": "REFLECTIONS OF EDUCATION",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "27-reflections-of-education.mp3",
+      "cover": "covers/27-reflections-of-education.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg28",
+      "title": "MIST & NEON",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "28-mist-and-neon.mp3",
+      "cover": "covers/28-mist-and-neon.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg29",
+      "title": "COIN FLIP DESTINY",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "29-coin-flip-destiny.mp3",
+      "cover": "covers/29-coin-flip-destiny.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg30",
+      "title": "RAINBOW LIES",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "30-rainbow-lies.mp3",
+      "cover": "covers/30-rainbow-lies.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg31",
+      "title": "THE WIND OF REBIRTH",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "31-the-wind-of-rebirth.mp3",
+      "cover": "covers/31-the-wind-of-rebirth.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg32",
+      "title": "MECHANICAL APATHY",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "32-mechanical-apathy.mp3",
+      "cover": "covers/32-mechanical-apathy.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg33",
+      "title": "THE FAITHFUL GATEWAY",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "33-the-faithful-gateway.mp3",
+      "cover": "covers/33-the-faithful-gateway.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg34",
+      "title": "CATHEDRALS OF STARDUST",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "34-cathedrals-of-stardust.mp3",
+      "cover": "covers/34-cathedrals-of-stardust.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg35",
+      "title": "THE APATHY CAGE",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "35-the-apathy-cage.mp3",
+      "cover": "covers/35-the-apathy-cage.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg36",
+      "title": "RAVE FROM THE CAGE",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "36-rave-from-the-cage.mp3",
+      "cover": "covers/36-rave-from-the-cage.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg37",
+      "title": "WILD RADICAL",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "37-wild-radical.mp3",
+      "cover": "covers/37-wild-radical.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg38",
+      "title": "THE ABSOLUTE APEX",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "38-the-absolute-apex.mp3",
+      "cover": "covers/38-the-absolute-apex.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg39",
+      "title": "DRIFTING BEYOND THE TOUCH",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "39-drifting-beyond-the-touch.mp3",
+      "cover": "covers/39-drifting-beyond-the-touch.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg40",
+      "title": "THE KINGDOM OF DAWN",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "40-the-kingdom-of-dawn.mp3",
+      "cover": "covers/40-the-kingdom-of-dawn.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg41",
+      "title": "THE REUNION CHRONICLES",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "41-the-reunion-chronicles.mp3",
+      "cover": "covers/41-the-reunion-chronicles.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
+    },
+    {
+      "id": "sg42",
+      "title": "THE GRAVITY OF LATENT ORBITS",
+      "genre": "Rock",
+      "language": "English",
+      "album": "",
+      "audio": "42-the-gravity-of-latent-orbits.mp3",
+      "cover": "covers/42-the-gravity-of-latent-orbits.jpeg",
+      "tags": [
+        "Rock",
+        "English"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-27T10:34:00+02:00"
     }
   ]
 }
