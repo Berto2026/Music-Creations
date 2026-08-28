@@ -958,6 +958,39 @@ img, video, canvas, svg { max-width:100%; }
 </style>
 
 <!-- Music Creations · Player continuo + Biblioteca musical auditada · 2026-08-29 -->
+
+<style id="music-creations-v9-filter-hotfix">
+/* ============================================================
+   MUSIC CREATIONS — V9 HOTFIX · FILTROS RESPONSIVE
+   Etiquetas completas y controles sin recortes en móvil.
+   ============================================================ */
+.filter-strip{display:flex;align-items:center;gap:7px;min-width:0}
+.filter-field{display:block;min-width:0;margin:0}
+.filter-field>span{display:none}
+.filter-field .filter{box-sizing:border-box;height:38px;width:auto;min-width:112px;max-width:190px;padding:8px 30px 8px 11px;white-space:nowrap;text-overflow:ellipsis;overflow:hidden}
+.style-field .filter{min-width:160px;max-width:230px}
+@media(max-width:650px){
+  .nav{display:block;padding:10px 12px 11px}
+  .brand{display:block;margin:0 0 9px;font-size:11px}
+  .nav-tools{width:100%;display:grid;grid-template-columns:minmax(0,1fr) 38px 38px;gap:8px;align-items:center}
+  .search{grid-column:1/-1;grid-row:1;width:100%;box-sizing:border-box;order:initial}
+  .search input{width:100%;min-width:0}
+  .filter-strip{grid-column:1/-1;grid-row:2;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;width:100%}
+  .filter-field>span{display:block;margin:0 0 4px;color:var(--gold);font:700 8px "Space Mono",monospace;letter-spacing:.13em}
+  .genre-field{grid-column:1;grid-row:1}
+  .language-field{grid-column:2;grid-row:1}
+  .style-field{grid-column:1/-1;grid-row:2}
+  .filter-field .filter,.style-field .filter{display:block;width:100%!important;min-width:0!important;max-width:none!important;height:42px;padding:8px 31px 8px 11px;font-size:10px;text-overflow:ellipsis}
+  .social-btn{grid-column:1;grid-row:3;justify-self:start;max-width:100%;min-width:0}
+  #favoritesNav{grid-column:2;grid-row:3}
+  #bell{grid-column:3;grid-row:3}
+}
+@media(max-width:360px){
+  .nav{padding-left:9px;padding-right:9px}
+  .nav-tools,.filter-strip{gap:6px}
+  .filter-field .filter,.style-field .filter{font-size:9px;padding-left:9px}
+}
+</style>
 </head>
 <body>
 
@@ -979,9 +1012,11 @@ img, video, canvas, svg { max-width:100%; }
   <a class="brand" href="#top">MUSIC CREATIONS</a>
   <div class="nav-tools">
     <label class="search"><span>⌕</span><input id="search" type="search" placeholder="Buscar canción, álbum..."></label>
-    <select id="genre" class="filter" aria-label="Género"><option value="Todos">Todos</option></select>
-    <select id="style" class="filter style-filter" aria-label="Estilo"><option value="Todos">Estilos</option></select>
-    <select id="language" class="filter" aria-label="Idioma"><option value="Todos">Todos</option><option value="Spanish">Spanish</option><option value="English">English</option></select>
+    <div class="filter-strip" aria-label="Filtros de biblioteca">
+      <label class="filter-field genre-field"><span>GÉNERO</span><select id="genre" class="filter" aria-label="Género"><option value="Todos">Todos</option></select></label>
+      <label class="filter-field style-field"><span>ESTILO</span><select id="style" class="filter style-filter" aria-label="Estilo"><option value="Todos">Todos los estilos</option></select></label>
+      <label class="filter-field language-field"><span>IDIOMA</span><select id="language" class="filter" aria-label="Idioma"><option value="Todos">Todos</option><option value="Spanish">Español</option><option value="English">English</option></select></label>
+    </div>
     <a class="social-btn" id="instagramLink" href="https://www.instagram.com/bertoantn23/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Berto Antúnez" title="Instagram · @bertoantn23"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5A4.5 4.5 0 1 1 12 16.5 4.5 4.5 0 0 1 12 7.5Zm0 2A2.5 2.5 0 1 0 12 14.5 2.5 2.5 0 0 0 12 9.5ZM17.5 6A1.5 1.5 0 1 1 17.5 9 1.5 1.5 0 0 1 17.5 6Z"/></svg><span>INSTAGRAM</span></a>
     <button class="icon-btn" id="favoritesNav" aria-label="Mis favoritos" title="Mis favoritos">♡<span class="badge hidden" id="favoritesBadge">0</span></button>
     <button class="icon-btn drops-bell" id="bell" type="button" aria-label="Music Creations Drops" title="Music Creations Drops">
@@ -1637,7 +1672,7 @@ function populateStyleFilter(){
   const eligible=allSongs().filter(s=>(state.genre==='Todos'||s.genre===state.genre)
     &&(state.language==='Todos'||s.language===state.language));
   const values=[...new Set(eligible.map(s=>s.style).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
-  style.innerHTML='<option value="Todos">Estilos</option>'+values.map(v=>`<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`).join('');
+  style.innerHTML='<option value="Todos">Todos los estilos</option>'+values.map(v=>`<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`).join('');
   style.value=values.includes(state.style)?state.style:'Todos';state.style=style.value;
 }
 function populateLibraryFilters(){
@@ -1832,13 +1867,18 @@ function updateModal(){
   document.getElementById('miniArtist').textContent=s.album||`${style} · Berto Antúnez`;
   updatePlayerLike();renderReviews();
   const target=REPO_BASE+s.audio;
-  // Mantener SIEMPRE el mismo elemento <audio>. Cambiar src ya inicia la
-  // carga del nuevo recurso; no hacemos pause()+load(), porque esa secuencia
-  // rompe con más facilidad la sesión de reproducción cuando Android tiene
-  // la PWA en segundo plano o la pantalla bloqueada.
+  // HOTFIX V9: mantenemos UN SOLO elemento <audio>, pero al cambiar de pista
+  // hacemos una carga explícita. En Android/PWA, asignar src y llamar a
+  // play() inmediatamente sin load() puede dejar el recurso en estado
+  // HAVE_NOTHING/NETWORK_EMPTY y la reproducción no arranca. pause()+load()
+  // se ejecuta con state.switchingTrack=true, por lo que el pause transitorio
+  // NO se interpreta como una pausa del usuario ni rompe la cola continua.
   const sourceChanged=audio.getAttribute('src')!==target;
   if(sourceChanged){
+    try{audio.pause()}catch{}
     audio.src=target;
+    audio.preload='auto';
+    audio.load();
     document.getElementById('cur').textContent='0:00';
     document.getElementById('dur').textContent='0:00';
     document.getElementById('fill').style.width='0%';
@@ -1871,9 +1911,21 @@ function play(){
   return Promise.resolve(result).then(()=>{
     state.playing=true;updatePlayIcons();setMediaState('playing');return true;
   }).catch(err=>{
-    // AbortError es normal durante un cambio muy rápido de fuente. No lo
-    // tratamos como una orden del usuario ni destruimos la cola/contexto.
-    if(err?.name!=='AbortError')console.warn('[Music Creations] No se pudo iniciar la reproducción:',err);
+    // Un AbortError puede aparecer si el navegador estaba terminando la carga
+    // anterior. Reintentamos una sola vez cuando el nuevo MP3 ya está listo.
+    if(err?.name==='AbortError'&&!state.userPaused){
+      return new Promise(resolve=>{
+        let done=false;
+        const finish=ok=>{if(done)return;done=true;clearTimeout(timer);audio.removeEventListener('canplay',retry);audio.removeEventListener('error',fail);resolve(ok)};
+        const retry=()=>{Promise.resolve(audio.play()).then(()=>{state.playing=true;updatePlayIcons();setMediaState('playing');finish(true)}).catch(()=>finish(false))};
+        const fail=()=>finish(false);
+        const timer=setTimeout(()=>finish(false),2500);
+        audio.addEventListener('canplay',retry,{once:true});
+        audio.addEventListener('error',fail,{once:true});
+        if(audio.readyState>=2)retry();
+      });
+    }
+    console.warn('[Music Creations] No se pudo iniciar la reproducción:',err);
     state.playing=!audio.paused;updatePlayIcons();setMediaState(audio.paused?'paused':'playing');return false;
   });
 }
