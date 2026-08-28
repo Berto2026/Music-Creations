@@ -697,6 +697,12 @@ img, video, canvas, svg { max-width:100%; }
   }
 }
 
+
+/* Filtro de estilo musical: más ancho para subgéneros como Metalcore o Progressive Rock. */
+.style-filter{width:132px;min-width:132px;max-width:132px}
+@media(max-width:650px){.style-filter{flex:0 1 132px;width:132px;min-width:132px;max-width:132px}}
+@media(max-width:390px){.style-filter{width:116px;min-width:116px;max-width:116px}}
+
 /* ---------- REPRODUCTOR: composición cinematográfica ---------- */
 .player-left{
   position:relative;
@@ -972,8 +978,9 @@ img, video, canvas, svg { max-width:100%; }
   <a class="brand" href="#top">MUSIC CREATIONS</a>
   <div class="nav-tools">
     <label class="search"><span>⌕</span><input id="search" type="search" placeholder="Buscar canción, álbum..."></label>
-    <select id="genre" class="filter"><option>Todos</option><option>Pop</option><option>Rock</option></select>
-    <select id="language" class="filter"><option>Todos</option><option>Spanish</option><option>English</option></select>
+    <select id="genre" class="filter" aria-label="Género"><option value="Todos">Todos</option></select>
+    <select id="style" class="filter style-filter" aria-label="Estilo"><option value="Todos">Estilos</option></select>
+    <select id="language" class="filter" aria-label="Idioma"><option value="Todos">Todos</option><option value="Spanish">Spanish</option><option value="English">English</option></select>
     <a class="social-btn" id="instagramLink" href="https://www.instagram.com/bertoantn23/" target="_blank" rel="noopener noreferrer" aria-label="Instagram de Berto Antúnez" title="Instagram · @bertoantn23"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5Zm0 2a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3H7Zm5 3.5A4.5 4.5 0 1 1 12 16.5 4.5 4.5 0 0 1 12 7.5Zm0 2A2.5 2.5 0 1 0 12 14.5 2.5 2.5 0 0 0 12 9.5ZM17.5 6A1.5 1.5 0 1 1 17.5 9 1.5 1.5 0 0 1 17.5 6Z"/></svg><span>INSTAGRAM</span></a>
     <button class="icon-btn" id="favoritesNav" aria-label="Mis favoritos" title="Mis favoritos">♡<span class="badge hidden" id="favoritesBadge">0</span></button>
     <button class="icon-btn drops-bell" id="bell" type="button" aria-label="Music Creations Drops" title="Music Creations Drops">
@@ -1149,12 +1156,12 @@ img, video, canvas, svg { max-width:100%; }
       <div id="queueList"></div>
       <div class="queue-section-title">AÑADIR A LA COLA</div>
       <div class="queue-add-grid"><select id="queueSongSelect" aria-label="Seleccionar canción"></select><button id="queueAdd">AÑADIR</button></div>
-      <div class="queue-tip">La cola se guarda en este dispositivo. También puedes reordenar las canciones con ↑ y ↓. Los controles de reproducción del teléfono, pantalla bloqueada y auriculares compatibles actúan sobre esta misma cola.</div>
+      <div class="queue-tip">La cola manual tiene prioridad y se consume pista a pista. Cuando termina, Music Creations vuelve automáticamente a la reproducción continua del contexto elegido. Limpiar la cola nunca detiene la música. Los controles del teléfono, pantalla bloqueada, coche y auriculares compatibles actúan sobre el mismo reproductor.</div>
     </div>
   </div>
 </div>
 
-<audio id="audio" preload="metadata"></audio>
+<audio id="audio" preload="auto" playsinline></audio>
 
 <script>
 /* ============================================================
@@ -1366,8 +1373,10 @@ function initDrops(){
 }
 
 const state = {
-  search:'', genre:'Todos', language:'Todos', current:null, index:0,
-  playing:false, shuffle:false, repeat:false, tab:'lyrics', queue:[], queueManual:false
+  search:'', genre:'Todos', style:'Todos', language:'Todos', current:null, index:0,
+  playing:false, shuffle:true, repeat:false, tab:'lyrics',
+  manualQueue:[], playHistory:[], autoUpcoming:[], playbackContext:null,
+  switchingTrack:false, userPaused:false
 };
 
 const audio = document.getElementById('audio');
@@ -1411,12 +1420,12 @@ function handlePopState(event){
     if(nav.view==='player'){
       // Se ha regresado a una vista de reproductor. Restauramos la canción
       // sin volver a cargar el audio si ya es la que está sonando.
-      if(nav.song && state.current?.id!==nav.song){
-        openSong(nav.song,false,true);
-      }else{
-        document.getElementById('overlay').classList.add('open');
-        document.getElementById('mini').classList.add('visible');
-      }
+      // El historial controla la vista, no la sesión de audio. Si la música
+      // avanzó en segundo plano, Atrás no debe cargar una canción antigua ni
+      // detener la pista actual.
+      document.getElementById('overlay').classList.add('open');
+      document.getElementById('mini').classList.add('visible');
+      if(state.current)updateModal();
       return;
     }
 
@@ -1462,66 +1471,149 @@ function showPlayerOverlay(){
 }
 
 
-const QUEUE_KEY='mc_play_queue_v1';
-function queueSave(){try{localStorage.setItem(QUEUE_KEY,JSON.stringify({ids:state.queue,manual:state.queueManual}))}catch{}}
-function queueLoad(){try{const x=JSON.parse(localStorage.getItem(QUEUE_KEY)||'null');if(x&&Array.isArray(x.ids)){const valid=new Set(allSongs().map(s=>s.id));state.queue=x.ids.filter(id=>valid.has(id));state.queueManual=!!x.manual}}catch{}}
+const QUEUE_KEY='mc_manual_queue_v2';
+const LEGACY_QUEUE_KEY='mc_play_queue_v1';
+
 function queueSong(id){return allSongs().find(s=>s.id===id)}
-function queueEnsure(id){
-  if(!id)return;
-  if(!state.queue.length){state.queue=filtered().map(s=>s.id);state.queueManual=false}
-  if(!state.queue.includes(id)){state.queue.push(id)}
-  queueSave();renderQueue();updateMediaSessionQueue();
+function validSongIds(ids){
+  const valid=new Set(allSongs().map(s=>s.id));
+  return (Array.isArray(ids)?ids:[]).filter(id=>valid.has(id));
 }
-function queueSeedFromFiltered(currentId){
-  if(state.queueManual && state.queue.length){queueEnsure(currentId);return}
-  const ids=filtered().map(s=>s.id);
-  state.queue=ids.length?ids:[currentId];
-  if(!state.queue.includes(currentId))state.queue.push(currentId);
-  state.queueManual=false;queueSave();renderQueue();updateMediaSessionQueue();
+function queueSave(){
+  try{localStorage.setItem(QUEUE_KEY,JSON.stringify({ids:state.manualQueue}))}catch{}
 }
-function queueCurrentIndex(){return state.current?state.queue.indexOf(state.current.id):-1}
+function queueLoad(){
+  try{
+    const saved=JSON.parse(localStorage.getItem(QUEUE_KEY)||'null');
+    if(saved&&Array.isArray(saved.ids)){
+      state.manualQueue=validSongIds(saved.ids);
+      return;
+    }
+    // Migración prudente: solo recuperamos la cola antigua si estaba marcada
+    // como manual. Las antiguas colas automáticas eran precisamente parte del
+    // problema y no deben volver a mezclarse con el nuevo motor continuo.
+    const legacy=JSON.parse(localStorage.getItem(LEGACY_QUEUE_KEY)||'null');
+    if(legacy?.manual===true&&Array.isArray(legacy.ids)){
+      state.manualQueue=validSongIds(legacy.ids);
+      queueSave();
+    }
+  }catch{}
+}
+function playbackContextFromFilters(){
+  return {genre:state.genre||'Todos',style:state.style||'Todos',language:state.language||'Todos'};
+}
+function songMatchesContext(song,ctx){
+  if(!song)return false;
+  return (!ctx||ctx.genre==='Todos'||song.genre===ctx.genre)
+    &&(!ctx||ctx.style==='Todos'||song.style===ctx.style)
+    &&(!ctx||ctx.language==='Todos'||song.language===ctx.language);
+}
+function shuffled(ids){
+  const a=[...ids];
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}
+  return a;
+}
+function rebuildAutoUpcoming(currentId=state.current?.id){
+  const library=allSongs();
+  if(!library.length){state.autoUpcoming=[];return}
+  const ctx=state.playbackContext||playbackContextFromFilters();
+  let primary=library.filter(s=>songMatchesContext(s,ctx));
+  if(!primary.length)primary=library;
+  const primarySet=new Set(primary.map(s=>s.id));
+  const rest=library.filter(s=>!primarySet.has(s.id));
+  const order=ids=>state.shuffle?shuffled(ids):[...ids];
+  let first=order(primary.map(s=>s.id));
+  let second=order(rest.map(s=>s.id));
+  // La canción que ya está sonando no se repite inmediatamente. Al terminar
+  // el bloque filtrado se recorre el resto de la biblioteca y después se
+  // construye un nuevo ciclo, volviendo de nuevo al contexto inicial.
+  first=first.filter(id=>id!==currentId);
+  second=second.filter(id=>id!==currentId);
+  state.autoUpcoming=first.concat(second);
+  if(!state.autoUpcoming.length&&currentId)state.autoUpcoming=[currentId];
+}
+function resetPlaybackContext(currentId=state.current?.id){
+  state.playbackContext=playbackContextFromFilters();
+  rebuildAutoUpcoming(currentId);
+}
+function peekAutoUpcoming(limit=6){
+  if(!state.autoUpcoming.length)rebuildAutoUpcoming();
+  return state.autoUpcoming.slice(0,limit).map(queueSong).filter(Boolean);
+}
+function takeAutoNext(){
+  if(!state.autoUpcoming.length)rebuildAutoUpcoming();
+  let guard=0;
+  while(state.autoUpcoming.length&&guard++<allSongs().length+2){
+    const id=state.autoUpcoming.shift();
+    if(id!==state.current?.id||allSongs().length===1)return id;
+  }
+  rebuildAutoUpcoming();
+  return state.autoUpcoming.shift()||state.current?.id||null;
+}
 function openQueue(){
-  queueEnsure(state.current?.id);renderQueue();fillQueueSelect();
+  renderQueue();fillQueueSelect();
   const p=document.getElementById('queuePanel');p.classList.add('open');p.setAttribute('aria-hidden','false');
 }
 function closeQueue(){const p=document.getElementById('queuePanel');p.classList.remove('open');p.setAttribute('aria-hidden','true')}
 function addToQueue(id,afterCurrent=false){
-  const s=queueSong(id);if(!s)return;
-  queueEnsure(id);state.queueManual=true;
-  if(afterCurrent){state.queue=state.queue.filter(x=>x!==id);const i=queueCurrentIndex();state.queue.splice(i<0?state.queue.length:i+1,0,id)}
+  const song=queueSong(id);if(!song)return;
+  // Una cola manual Spotify-like: lo añadido se reproduce antes de volver al
+  // autoplay. Evitamos duplicados accidentales desde la interfaz.
+  state.manualQueue=state.manualQueue.filter(x=>x!==id);
+  if(afterCurrent)state.manualQueue.unshift(id);else state.manualQueue.push(id);
   queueSave();renderQueue();fillQueueSelect();updateMediaSessionQueue();
 }
 function removeFromQueue(id){
-  if(id===state.current?.id && state.queue.length===1)return;
-  state.queue=state.queue.filter(x=>x!==id);state.queueManual=true;queueSave();renderQueue();fillQueueSelect();updateMediaSessionQueue();
-}
-function moveQueue(id,dir){const i=state.queue.indexOf(id),j=i+dir;if(i<0||j<0||j>=state.queue.length)return;[state.queue[i],state.queue[j]]=[state.queue[j],state.queue[i]];state.queueManual=true;queueSave();renderQueue();updateMediaSessionQueue()}
-function clearQueue(){
-  if(state.current){state.queue=[state.current.id];state.queueManual=true}else state.queue=[];
+  state.manualQueue=state.manualQueue.filter(x=>x!==id);
   queueSave();renderQueue();fillQueueSelect();updateMediaSessionQueue();
+}
+function moveQueue(id,dir){
+  const i=state.manualQueue.indexOf(id),j=i+dir;
+  if(i<0||j<0||j>=state.manualQueue.length)return;
+  [state.manualQueue[i],state.manualQueue[j]]=[state.manualQueue[j],state.manualQueue[i]];
+  queueSave();renderQueue();updateMediaSessionQueue();
+}
+function clearQueue(){
+  state.manualQueue=[];
+  queueSave();renderQueue();fillQueueSelect();updateMediaSessionQueue();
+}
+function playQueuedNow(id){
+  if(!queueSong(id))return;
+  state.manualQueue=state.manualQueue.filter(x=>x!==id);
+  state.autoUpcoming=state.autoUpcoming.filter(x=>x!==id);
+  queueSave();
+  switchTrack(id,{autoplay:true,remember:true});
+  closeQueue();
 }
 function renderQueue(){
   const box=document.getElementById('queueList');if(!box)return;
-  const q=state.queue.map(queueSong).filter(Boolean);
-  if(!q.length){box.innerHTML='<div class="queue-empty">La cola está vacía.<br>Añade una canción para empezar.</div>';return}
-  box.innerHTML=q.map((s,i)=>{
-    const active=s.id===state.current?.id;
-    const thumb=s.cover?`<img src="${escapeHTML(artworkSrc(s))}" alt="">`:'<div class="queue-num">'+String(i+1).padStart(2,'0')+'</div>';
-    return `<div class="queue-item ${active?'current':''}" data-queue-id="${escapeHTML(s.id)}">
-      <div class="queue-thumb">${thumb}</div><div class="queue-info"><strong>${escapeHTML(s.title)}</strong><span>${escapeHTML(s.album||'Single')} · ${i===queueCurrentIndex()?'REPRODUCIENDO':i>queueCurrentIndex()?'A CONTINUACIÓN':'EN COLA'}</span></div>
-      <div class="queue-item-actions"><button data-qplay="${escapeHTML(s.id)}" title="Reproducir">▶</button><button data-qup="${escapeHTML(s.id)}" title="Subir">↑</button><button data-qdown="${escapeHTML(s.id)}" title="Bajar">↓</button><button data-qremove="${escapeHTML(s.id)}" title="Quitar">×</button></div>
-    </div>`
-  }).join('');
-  box.querySelectorAll('[data-qplay]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();state.queueManual=true;queueSave();openSong(b.dataset.qplay,true);closeQueue()}));
+  const current=state.current;
+  const manual=state.manualQueue.map(queueSong).filter(Boolean);
+  const auto=peekAutoUpcoming(6);
+  const row=(song,label,actions='')=>{
+    const thumb=song.cover?`<img src="${escapeHTML(artworkSrc(song))}" alt="">`:'<div class="queue-num">MC</div>';
+    return `<div class="queue-item ${song.id===current?.id?'current':''}" data-queue-id="${escapeHTML(song.id)}"><div class="queue-thumb">${thumb}</div><div class="queue-info"><strong>${escapeHTML(song.title)}</strong><span>${escapeHTML(song.style||song.genre||'')} · ${label}</span></div>${actions}</div>`;
+  };
+  let html='';
+  if(current)html+=row(current,'REPRODUCIENDO','<div class="queue-item-actions"></div>');
+  html+='<div class="queue-section-title">COLA MANUAL · PRIORIDAD</div>';
+  if(manual.length){
+    html+=manual.map((song,i)=>row(song,i===0?'SIGUIENTE EN COLA':'EN COLA',`<div class="queue-item-actions"><button data-qplay="${escapeHTML(song.id)}" title="Reproducir ahora">▶</button><button data-qup="${escapeHTML(song.id)}" title="Subir">↑</button><button data-qdown="${escapeHTML(song.id)}" title="Bajar">↓</button><button data-qremove="${escapeHTML(song.id)}" title="Quitar">×</button></div>`)).join('');
+  }else html+='<div class="queue-empty">Sin canciones en la cola manual. La reproducción automática continuará igualmente.</div>';
+  html+='<div class="queue-section-title">DESPUÉS · REPRODUCCIÓN AUTOMÁTICA</div>';
+  if(auto.length)html+=auto.map(song=>row(song,'AUTOPLAY','<div class="queue-item-actions"></div>')).join('');
+  else html+='<div class="queue-empty">El ciclo automático se regenerará al finalizar la pista.</div>';
+  box.innerHTML=html;
+  box.querySelectorAll('[data-qplay]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();playQueuedNow(b.dataset.qplay)}));
   box.querySelectorAll('[data-qup]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();moveQueue(b.dataset.qup,-1)}));
   box.querySelectorAll('[data-qdown]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();moveQueue(b.dataset.qdown,1)}));
   box.querySelectorAll('[data-qremove]').forEach(b=>b.addEventListener('click',e=>{e.stopPropagation();removeFromQueue(b.dataset.qremove)}));
-  box.querySelectorAll('[data-queue-id]').forEach(b=>b.addEventListener('click',()=>{state.queueManual=true;queueSave();openSong(b.dataset.queueId,true);closeQueue()}));
 }
 function fillQueueSelect(){
   const sel=document.getElementById('queueSongSelect');if(!sel)return;
-  const songs=allSongs().filter(s=>!state.queue.includes(s.id));
-  sel.innerHTML=songs.length?songs.map(s=>`<option value="${escapeHTML(s.id)}">${escapeHTML(s.title)} — ${escapeHTML(s.album||'Single')}</option>`).join(''):'<option value="">Toda la biblioteca está en la cola</option>';
+  const blocked=new Set([state.current?.id,...state.manualQueue].filter(Boolean));
+  const songs=allSongs().filter(s=>!blocked.has(s.id));
+  sel.innerHTML=songs.length?songs.map(s=>`<option value="${escapeHTML(s.id)}">${escapeHTML(s.title)} — ${escapeHTML(s.style||s.genre||'')}</option>`).join(''):'<option value="">No hay más canciones disponibles</option>';
   sel.disabled=!songs.length;
 }
 function artworkSrc(song){
@@ -1529,8 +1621,6 @@ function artworkSrc(song){
   return String(song.cover).startsWith('data:')?song.cover:REPO_BASE+song.cover;
 }
 function updateMediaSessionQueue(){
-  // Media Session no ofrece una cola estándar en todos los navegadores.
-  // Mostramos la cola mediante next/previous y, cuando existe, la API experimental.
   if(!('mediaSession' in navigator))return;
   try{
     if('setPositionState' in navigator.mediaSession && Number.isFinite(audio.duration) && audio.duration>0){
@@ -1539,6 +1629,27 @@ function updateMediaSessionQueue(){
   }catch{}
 }
 function allSongs(){ return SONGS.concat(SINGLES); }
+function populateLibraryFilters(){
+  const songs=allSongs();
+  const genre=document.getElementById('genre');
+  const style=document.getElementById('style');
+  const language=document.getElementById('language');
+  if(genre){
+    const values=[...new Set(songs.map(s=>s.genre).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+    genre.innerHTML='<option value="Todos">Todos</option>'+values.map(v=>`<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`).join('');
+    genre.value=values.includes(state.genre)?state.genre:'Todos';state.genre=genre.value;
+  }
+  if(style){
+    const values=[...new Set(songs.map(s=>s.style).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+    style.innerHTML='<option value="Todos">Estilos</option>'+values.map(v=>`<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`).join('');
+    style.value=values.includes(state.style)?state.style:'Todos';state.style=style.value;
+  }
+  if(language){
+    const values=[...new Set(songs.map(s=>s.language).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+    language.innerHTML='<option value="Todos">Todos</option>'+values.map(v=>`<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`).join('');
+    language.value=values.includes(state.language)?state.language:'Todos';state.language=language.value;
+  }
+}
 function escapeHTML(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML;}
 function slug(v){return String(v).toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
 function liked(id){try{return JSON.parse(localStorage.getItem('mc_likes')||'{}')[id]===true}catch{return false}}
@@ -1612,8 +1723,11 @@ function coverHTML(song,where='card'){
 function filtered(){
   const q=state.search.trim().toLowerCase();
   return allSongs().filter(s=>{
-    const hay=[s.title,s.album,s.genre,s.language,...(s.tags||[])].join(' ').toLowerCase();
-    return (!q||hay.includes(q))&&(state.genre==='Todos'||s.genre===state.genre)&&(state.language==='Todos'||s.language===state.language);
+    const hay=[s.title,s.album,s.genre,s.style,s.language,...(s.tags||[])].join(' ').toLowerCase();
+    return (!q||hay.includes(q))
+      &&(state.genre==='Todos'||s.genre===state.genre)
+      &&(state.style==='Todos'||s.style===state.style)
+      &&(state.language==='Todos'||s.language===state.language);
   });
 }
 
@@ -1644,7 +1758,7 @@ function card(song){
   const isLiked=liked(song.id);
   return `<article class="card" data-open="${escapeHTML(song.id)}">
     <div class="card-cover">${coverHTML(song)}<div class="play-hover"><div class="play-circle">▶</div></div>${isSongNew(song)?'<span class="new">NUEVO</span>':''}</div>
-    <div class="card-body"><div class="card-cat">${escapeHTML(song.genre.toUpperCase())} · ${escapeHTML(song.language==='Spanish'?'ESPAÑOL':'ENGLISH')}</div>
+    <div class="card-body"><div class="card-cat">${escapeHTML((song.style||song.genre).toUpperCase())} · ${escapeHTML(song.language==='Spanish'?'ESPAÑOL':'ENGLISH')}</div>
     <div class="card-title">${escapeHTML(song.title)}</div><div class="card-artist">Berto Antúnez</div>
     <div class="card-row"><div class="tags">${(song.tags||[]).slice(0,2).map(t=>`<span class="tag">${escapeHTML(t)}</span>`).join('')}</div>
     <button class="like ${isLiked?'liked':''}" data-like="${escapeHTML(song.id)}" aria-label="Me gusta">${isLiked?'♥':'♡'}</button></div></div></article>`;
@@ -1658,76 +1772,137 @@ function toggleLike(id,event=null){
   if(state.current?.id===id) updatePlayerLike();
 }
 
-function openSong(id,autoplay=true,fromHistory=false){
-  const list=filtered(), idx=list.findIndex(s=>s.id===id);
+function syncPlayerHistory(songId){
+  if(history.state?.mcApp===APP_HISTORY && history.state.view==='player'){
+    history.replaceState({mcApp:APP_HISTORY,view:'player',song:songId},document.title,location.href);
+  }
+}
+function switchTrack(id,{autoplay=true,remember=true}={}){
   const global=allSongs().findIndex(s=>s.id===id);
-  if(!list.length||global<0)return;
-
+  if(global<0)return false;
+  const previous=state.current?.id;
+  if(remember&&previous&&previous!==id){
+    state.playHistory.push(previous);
+    if(state.playHistory.length>100)state.playHistory.shift();
+  }
   state.current=allSongs()[global];state.index=global;
-  if(!fromHistory) queueSeedFromFiltered(id); else queueEnsure(id);
-
-  // Cada canción abierta desde el catálogo crea una vista de reproductor.
-  // Así, "Atrás" vuelve al catálogo en lugar de abandonar la plataforma.
-  if(!fromHistory) pushPlayerHistory(id);
-
-  document.getElementById('overlay').classList.add('open');
+  state.switchingTrack=true;
+  // Activamos autoplay ANTES de cambiar src. Así el mismo elemento <audio>
+  // conserva explícitamente la intención de reproducción al encadenar pistas
+  // en segundo plano, además del play() que hacemos como confirmación.
+  if(autoplay){state.userPaused=false;audio.autoplay=true}
   updateModal();
   renderQueue();fillQueueSelect();updateMediaSessionQueue();
   document.getElementById('mini').classList.add('visible');
-  if(autoplay)play();
+  syncPlayerHistory(id);
+  if(autoplay){
+    play().then(()=>{state.switchingTrack=false});
+  }else{
+    queueMicrotask(()=>{state.switchingTrack=false});
+  }
+  return true;
+}
+function openSong(id,autoplay=true,fromHistory=false){
+  const global=allSongs().findIndex(s=>s.id===id);
+  if(global<0)return;
+  if(!fromHistory){
+    resetPlaybackContext(id);
+    pushPlayerHistory(id);
+  }
+  document.getElementById('overlay').classList.add('open');
+  switchTrack(id,{autoplay,remember:state.current?.id!==id});
 }
 function updateModal(){
   const s=state.current;if(!s)return;
   document.getElementById('modalTitle').textContent=s.title;
   document.getElementById('modalArtist').textContent='Berto Antúnez';
-  document.getElementById('modalMeta').textContent=`${s.genre.toUpperCase()} · ${s.language==='Spanish'?'ESPAÑOL':'ENGLISH'}${s.album?' · '+s.album.toUpperCase(): ' · SINGLE'}`;
+  const style=s.style||s.genre;
+  document.getElementById('modalMeta').textContent=`${String(style).toUpperCase()} · ${String(s.genre||'').toUpperCase()} · ${s.language==='Spanish'?'ESPAÑOL':'ENGLISH'}${s.album?' · '+s.album.toUpperCase(): ' · SINGLE'}`;
   document.getElementById('pills').innerHTML=(s.tags||[]).map(t=>`<span class="tag">${escapeHTML(t)}</span>`).join('');
   document.getElementById('lyrics').textContent=s.lyrics||'La letra de esta producción se incorporará próximamente.';
   document.getElementById('modalArt').innerHTML=coverHTML(s,'modal');
   document.getElementById('miniCover').innerHTML=coverHTML(s,'mini');
   document.getElementById('miniTitle').textContent=s.title;
-  document.getElementById('miniArtist').textContent=s.album||'Single · Berto Antúnez';
+  document.getElementById('miniArtist').textContent=s.album||`${style} · Berto Antúnez`;
   updatePlayerLike();renderReviews();
-  audio.pause();audio.src=REPO_BASE+s.audio;audio.load();
-  document.getElementById('cur').textContent='0:00';document.getElementById('dur').textContent='0:00';document.getElementById('fill').style.width='0%';document.getElementById('miniFill').style.width='0%';
-  state.playing=false;updatePlayIcons();
+  const target=REPO_BASE+s.audio;
+  // Mantener SIEMPRE el mismo elemento <audio>. Cambiar src ya inicia la
+  // carga del nuevo recurso; no hacemos pause()+load(), porque esa secuencia
+  // rompe con más facilidad la sesión de reproducción cuando Android tiene
+  // la PWA en segundo plano o la pantalla bloqueada.
+  const sourceChanged=audio.getAttribute('src')!==target;
+  if(sourceChanged){
+    audio.src=target;
+    document.getElementById('cur').textContent='0:00';
+    document.getElementById('dur').textContent='0:00';
+    document.getElementById('fill').style.width='0%';
+    document.getElementById('miniFill').style.width='0%';
+  }else{
+    // Al volver desde el historial o reabrir el overlay no tocamos la
+    // posición de una pista que sigue sonando en segundo plano.
+    document.getElementById('cur').textContent=fmt(audio.currentTime);
+    document.getElementById('dur').textContent=fmt(audio.duration);
+    const progress=audio.duration?(audio.currentTime/audio.duration)*100:0;
+    document.getElementById('fill').style.width=progress+'%';
+    document.getElementById('miniFill').style.width=progress+'%';
+  }
+  updatePlayerLike();
   if('mediaSession' in navigator){
-    try{navigator.mediaSession.metadata=new MediaMetadata({title:s.title,artist:'Berto Antúnez',album:s.album||'Single',artwork:[{src:artworkSrc(s),width:784,height:1168,type:'image/jpeg'}]})}catch{}
+    try{
+      const art=artworkSrc(s);
+      navigator.mediaSession.metadata=new MediaMetadata({
+        title:s.title,artist:'Berto Antúnez',album:s.album||style||'Single',
+        artwork:art?[{src:art,type:/\.png(?:\?|$)/i.test(art)?'image/png':'image/jpeg'}]:[]
+      });
+    }catch{}
   }
 }
-function updatePlayerLike(){
-  if(!state.current)return;
-  const b=document.getElementById('modalMeta');b.style.opacity='1';
-  const btn=document.getElementById('playerLike');
-  if(btn){const on=liked(state.current.id);btn.textContent=on?'♥':'♡';btn.classList.toggle('liked',on);btn.title=on?'Quitar de favoritos':'Añadir a favoritos';btn.setAttribute('aria-label',btn.title)}
-}
 function play(){
-  if(!state.current)return;
-  audio.play().then(()=>{state.playing=true;updatePlayIcons();setMediaState('playing')}).catch(()=>{state.playing=false;updatePlayIcons()});
+  if(!state.current)return Promise.resolve(false);
+  state.userPaused=false;audio.autoplay=true;
+  let result;
+  try{result=audio.play()}catch(err){result=Promise.reject(err)}
+  return Promise.resolve(result).then(()=>{
+    state.playing=true;updatePlayIcons();setMediaState('playing');return true;
+  }).catch(err=>{
+    // AbortError es normal durante un cambio muy rápido de fuente. No lo
+    // tratamos como una orden del usuario ni destruimos la cola/contexto.
+    if(err?.name!=='AbortError')console.warn('[Music Creations] No se pudo iniciar la reproducción:',err);
+    state.playing=!audio.paused;updatePlayIcons();setMediaState(audio.paused?'paused':'playing');return false;
+  });
 }
-function pause(){audio.pause();state.playing=false;updatePlayIcons();setMediaState('paused')}
-function togglePlay(){state.playing?pause():play()}
+function pause(){audio.autoplay=false;audio.pause();state.userPaused=true;state.playing=false;updatePlayIcons();setMediaState('paused')}
+function togglePlay(){audio.paused?play():pause()}
 function updatePlayIcons(){
-  const icon=state.playing?'Ⅱ':'▶';
+  const icon=state.playing&&!audio.paused?'Ⅱ':'▶';
   document.getElementById('modalPlay').textContent=icon;document.getElementById('miniPlay').textContent=icon;
-  document.getElementById('eq').classList.toggle('playing',state.playing);
+  document.getElementById('eq').classList.toggle('playing',state.playing&&!audio.paused);
 }
 function closePlayer(){
-  // El cierre es navegación interna. Atrás/X no detiene nunca el audio.
   if(history.state?.mcApp===APP_HISTORY && history.state.view==='player') history.back();
   else { hidePlayerOverlay(); scrollToLibrary(); }
 }
-function go(delta){
+function nextTrack(reason='user'){
   if(!state.current)return;
-  queueEnsure(state.current.id);
-  const q=state.queue.map(queueSong).filter(Boolean);if(!q.length)return;
-  let i=q.findIndex(s=>s.id===state.current.id);if(i<0){queueEnsure(state.current.id);i=q.length-1}
-  let next;
-  if(state.shuffle){
-    const choices=q.filter(s=>s.id!==state.current.id);next=choices.length?choices[Math.floor(Math.random()*choices.length)]:q[i];
-  }else{next=q[(i+delta+q.length)%q.length]}
-  openSong(next.id,true);
+  let id=null;
+  if(state.manualQueue.length){
+    id=state.manualQueue.shift();
+    state.autoUpcoming=state.autoUpcoming.filter(x=>x!==id);
+    queueSave();
+  }else id=takeAutoNext();
+  if(!id)return;
+  switchTrack(id,{autoplay:true,remember:true});
 }
+function previousTrack(){
+  if(!state.current)return;
+  // Comportamiento habitual de reproductores: si han pasado unos segundos,
+  // anterior reinicia la pista; si no, vuelve a la pista reproducida antes.
+  if(audio.currentTime>4){audio.currentTime=0;return}
+  const id=state.playHistory.pop();
+  if(id&&queueSong(id))switchTrack(id,{autoplay:true,remember:false});
+  else{audio.currentTime=0;play()}
+}
+function go(delta){if(delta<0)previousTrack();else nextTrack('user')}
 
 function setMediaState(st){try{if('mediaSession' in navigator)navigator.mediaSession.playbackState=st}catch{}}
 
@@ -1780,24 +1955,36 @@ function submitDownloadRequest(){
 
 function initNav(){
   document.getElementById('search').addEventListener('input',e=>{state.search=e.target.value;render()});
-  document.getElementById('genre').addEventListener('change',e=>{state.genre=e.target.value;render()});
+  document.getElementById('genre').addEventListener('change',e=>{state.genre=e.target.value;state.style='Todos';document.getElementById('style').value='Todos';render()});
+  document.getElementById('style').addEventListener('change',e=>{state.style=e.target.value;render()});
   document.getElementById('language').addEventListener('change',e=>{state.language=e.target.value;render()});
 }
 
 function initAudio(){
   audio.volume=.9;
+  audio.preload='auto';
   audio.addEventListener('loadedmetadata',()=>{document.getElementById('dur').textContent=fmt(audio.duration);updateMediaSessionQueue()});
   audio.addEventListener('timeupdate',()=>{
     const p=audio.duration?(audio.currentTime/audio.duration)*100:0;
     document.getElementById('fill').style.width=p+'%';document.getElementById('miniFill').style.width=p+'%';
     document.getElementById('cur').textContent=fmt(audio.currentTime); updateMediaSessionQueue();
   });
-  audio.addEventListener('play',()=>{state.playing=true;updatePlayIcons();setMediaState('playing')});
-  audio.addEventListener('pause',()=>{state.playing=false;updatePlayIcons();setMediaState('paused')});
-  audio.addEventListener('ended',()=>{
-    if(state.repeat){audio.currentTime=0;play()}else{go(1)}
+  audio.addEventListener('play',()=>{state.playing=true;state.userPaused=false;updatePlayIcons();setMediaState('playing')});
+  audio.addEventListener('pause',()=>{
+    // Un pause transitorio durante un cambio de src no debe interpretarse
+    // como fin de sesión. El siguiente play actualizará inmediatamente el UI.
+    if(!state.switchingTrack){state.playing=false;updatePlayIcons();setMediaState('paused')}
   });
-  audio.addEventListener('error',()=>{state.playing=false;updatePlayIcons()});
+  audio.addEventListener('ended',()=>{
+    if(state.repeat){audio.currentTime=0;play()}else nextTrack('ended');
+  });
+  audio.addEventListener('error',()=>{
+    state.playing=false;updatePlayIcons();
+    // Un MP3 individual no debe detener una sesión completa. Si la URL falla,
+    // saltamos al siguiente elemento tras una breve pausa para evitar bucles
+    // agresivos cuando no hay conexión.
+    if(state.current&&!state.userPaused){setTimeout(()=>nextTrack('error'),1200)}
+  });
   document.getElementById('progress').addEventListener('click',e=>{
     if(!audio.duration)return;const r=e.currentTarget.getBoundingClientRect();audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration;
   });
@@ -1806,28 +1993,29 @@ function initAudio(){
 }
 
 function initMediaSession(){
+  if('audioSession' in navigator){try{navigator.audioSession.type='playback'}catch{}}
   if(!('mediaSession' in navigator))return;
   const actions={
-    play:()=>play(),pause:()=>pause(),previoustrack:()=>go(-1),nexttrack:()=>go(1),
-    seekbackward:()=>{audio.currentTime=Math.max(0,audio.currentTime-10)},
-    seekforward:()=>{audio.currentTime=Math.min(audio.duration||0,audio.currentTime+10)},
+    play:()=>play(),pause:()=>pause(),stop:()=>pause(),
+    previoustrack:()=>previousTrack(),nexttrack:()=>nextTrack('media-session'),
+    seekbackward:(details)=>{audio.currentTime=Math.max(0,audio.currentTime-(details?.seekOffset||10))},
+    seekforward:(details)=>{audio.currentTime=Math.min(audio.duration||0,audio.currentTime+(details?.seekOffset||10))},
     seekto:(details)=>{if(details.fastSeek&&'fastSeek' in audio)audio.fastSeek(details.seekTime);else audio.currentTime=details.seekTime}
   };
   Object.entries(actions).forEach(([name,fn])=>{try{navigator.mediaSession.setActionHandler(name,fn)}catch{}});
 }
 
 function keepPlaybackOnBackground(){
-  // No pausamos el elemento <audio> al ocultar/minimizar la pestaña o app.
-  // Los navegadores compatibles mantienen la reproducción y Media Session
-  // permite controlarla desde la pantalla bloqueada/controles del sistema.
+  // No existe ninguna orden que pause por visibilitychange/pagehide. Mientras
+  // el proceso de la PWA siga vivo, el mismo <audio> y la misma Media Session
+  // continúan siendo la fuente de verdad para pantalla bloqueada, Bluetooth,
+  // controles del coche, auriculares y notificación multimedia de Android.
   document.addEventListener('visibilitychange',()=>{
-    if(document.visibilityState==='visible' && state.current){
-      updatePlayIcons();
-      if('mediaSession' in navigator){
-        try{navigator.mediaSession.playbackState=audio.paused?'paused':'playing'}catch{}
-      }
+    if(state.current&&'mediaSession' in navigator){
+      try{navigator.mediaSession.playbackState=audio.paused?'paused':'playing'}catch{}
     }
   });
+  window.addEventListener('pageshow',()=>{if(state.current)updateMediaSessionQueue()});
 }
 
 async function init(){
@@ -1841,6 +2029,7 @@ async function init(){
     // inicializando la interfaz con un catálogo vacío.
     return;
   }
+  populateLibraryFilters();
   queueLoad();
   initHistory();
   initNav();initAudio();initMediaSession();keepPlaybackOnBackground();render();initDrops();
@@ -1854,7 +2043,7 @@ async function init(){
   document.getElementById('miniPlay').addEventListener('click',togglePlay);
   document.getElementById('prev').addEventListener('click',()=>go(-1));document.getElementById('next').addEventListener('click',()=>go(1));
   document.getElementById('miniPrev').addEventListener('click',()=>go(-1));document.getElementById('miniNext').addEventListener('click',()=>go(1));
-  document.getElementById('shuffle').addEventListener('click',e=>{state.shuffle=!state.shuffle;e.currentTarget.style.color=state.shuffle?'var(--gold)':''});
+  document.getElementById('shuffle').style.color=state.shuffle?'var(--gold)':'';document.getElementById('shuffle').addEventListener('click',e=>{state.shuffle=!state.shuffle;rebuildAutoUpcoming();e.currentTarget.style.color=state.shuffle?'var(--gold)':'';renderQueue()});
   document.getElementById('repeat').addEventListener('click',e=>{state.repeat=!state.repeat;e.currentTarget.style.color=state.repeat?'var(--gold)':''});
   document.getElementById('favoritesToggle').addEventListener('click',toggleFavoritesPanel);
   document.getElementById('favoritesNav').addEventListener('click',()=>setFavoritesPanel(true));
