@@ -957,6 +957,7 @@ img, video, canvas, svg { max-width:100%; }
 @media(max-width:650px){.social-btn{display:none}.hero-actions{width:100%}.hero-actions .enter-btn,.hero-actions .install-app-btn{width:min(330px,100%)}}
 </style>
 
+<!-- Music Creations · Player continuo + Biblioteca musical auditada · 2026-08-29 -->
 </head>
 <body>
 
@@ -1629,26 +1630,31 @@ function updateMediaSessionQueue(){
   }catch{}
 }
 function allSongs(){ return SONGS.concat(SINGLES); }
+function populateStyleFilter(){
+  const style=document.getElementById('style');if(!style)return;
+  // El segundo nivel depende del género e idioma elegidos. Así nunca se
+  // ofrecen estilos que conduzcan a una combinación vacía.
+  const eligible=allSongs().filter(s=>(state.genre==='Todos'||s.genre===state.genre)
+    &&(state.language==='Todos'||s.language===state.language));
+  const values=[...new Set(eligible.map(s=>s.style).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
+  style.innerHTML='<option value="Todos">Estilos</option>'+values.map(v=>`<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`).join('');
+  style.value=values.includes(state.style)?state.style:'Todos';state.style=style.value;
+}
 function populateLibraryFilters(){
   const songs=allSongs();
   const genre=document.getElementById('genre');
-  const style=document.getElementById('style');
   const language=document.getElementById('language');
   if(genre){
     const values=[...new Set(songs.map(s=>s.genre).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
-    genre.innerHTML='<option value="Todos">Todos</option>'+values.map(v=>`<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`).join('');
+    genre.innerHTML='<option value="Todos">Géneros</option>'+values.map(v=>`<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`).join('');
     genre.value=values.includes(state.genre)?state.genre:'Todos';state.genre=genre.value;
-  }
-  if(style){
-    const values=[...new Set(songs.map(s=>s.style).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
-    style.innerHTML='<option value="Todos">Estilos</option>'+values.map(v=>`<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`).join('');
-    style.value=values.includes(state.style)?state.style:'Todos';state.style=style.value;
   }
   if(language){
     const values=[...new Set(songs.map(s=>s.language).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'es'));
-    language.innerHTML='<option value="Todos">Todos</option>'+values.map(v=>`<option value="${escapeHTML(v)}">${escapeHTML(v)}</option>`).join('');
+    language.innerHTML='<option value="Todos">Idiomas</option>'+values.map(v=>`<option value="${escapeHTML(v)}">${v==='Spanish'?'Español':escapeHTML(v)}</option>`).join('');
     language.value=values.includes(state.language)?state.language:'Todos';state.language=language.value;
   }
+  populateStyleFilter();
 }
 function escapeHTML(v){const d=document.createElement('div');d.textContent=v??'';return d.innerHTML;}
 function slug(v){return String(v).toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
@@ -1946,18 +1952,18 @@ function submitDownloadRequest(){
     `Correo: ${email}`,'',
     'El usuario solicita autorización para descargar esta canción.'
   ].join('\n');
-  const mailto=`mailto:comprasantuneznorberto@gmai.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const mailto=`mailto:comprasantuneznorberto@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   window.location.href=mailto;
   const status=document.getElementById('requestStatus');
-  status.textContent='Solicitud preparada para enviarse a comprasantuneznorberto@gmai.com. Si tu dispositivo pregunta qué aplicación de correo usar, selecciona tu cliente habitual y pulsa Enviar.';
+  status.textContent='Solicitud preparada para enviarse a comprasantuneznorberto@gmail.com. Si tu dispositivo pregunta qué aplicación de correo usar, selecciona tu cliente habitual y pulsa Enviar.';
   status.classList.add('show');
 }
 
 function initNav(){
   document.getElementById('search').addEventListener('input',e=>{state.search=e.target.value;render()});
-  document.getElementById('genre').addEventListener('change',e=>{state.genre=e.target.value;state.style='Todos';document.getElementById('style').value='Todos';render()});
+  document.getElementById('genre').addEventListener('change',e=>{state.genre=e.target.value;state.style='Todos';populateStyleFilter();render()});
   document.getElementById('style').addEventListener('change',e=>{state.style=e.target.value;render()});
-  document.getElementById('language').addEventListener('change',e=>{state.language=e.target.value;render()});
+  document.getElementById('language').addEventListener('change',e=>{state.language=e.target.value;state.style='Todos';populateStyleFilter();render()});
 }
 
 function initAudio(){
