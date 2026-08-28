@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "artist": "Berto Antúnez",
   "songs": [
     {
@@ -11,25 +11,30 @@
       "audio": "01-the-emerald-revolution.mp3",
       "coverKey": "if01",
       "tags": [
+        "Hard Rock",
         "Rock",
-        "Épico"
+        "Épico",
+        "Enérgico"
       ],
       "isNew": false,
       "lyrics": "",
       "addedAt": "2026-01-01T00:00:00+01:00",
-      "style": "Symphonic Rock"
+      "style": "Hard Rock"
     },
     {
       "id": "if02",
-      "title": "Naive Dreams",
+      "title": "Naïve Dreams",
       "genre": "Rock",
       "language": "English",
       "album": "Infinite Frontier",
       "audio": "02-naive-dreams.mp3",
       "coverKey": "if02",
       "tags": [
+        "Atmospheric Rock",
         "Rock",
-        "Atmosférico"
+        "Dreams",
+        "Atmosférico",
+        "Melódico"
       ],
       "isNew": false,
       "lyrics": "",
@@ -45,13 +50,15 @@
       "audio": "03-my-lifetime-anchor.mp3",
       "coverKey": "if03",
       "tags": [
+        "Melodic Rock",
         "Rock",
-        "Emocional"
+        "Emocional",
+        "Melódico"
       ],
       "isNew": false,
       "lyrics": "",
       "addedAt": "2026-01-01T00:00:00+01:00",
-      "style": "Alternative Rock"
+      "style": "Melodic Rock"
     },
     {
       "id": "if04",
@@ -62,8 +69,11 @@
       "audio": "04-bright-blue-sky.mp3",
       "coverKey": "if04",
       "tags": [
+        "Pop Rock",
         "Rock",
-        "Melódico"
+        "Melódico",
+        "Energía",
+        "Luminoso"
       ],
       "isNew": false,
       "lyrics": "",
@@ -79,30 +89,36 @@
       "audio": "05-sovereign-mind.mp3",
       "coverKey": "if05",
       "tags": [
+        "Alternative Rock",
         "Rock",
-        "Intenso"
+        "Intenso",
+        "Power",
+        "Dinámico"
       ],
       "isNew": false,
       "lyrics": "",
       "addedAt": "2026-01-01T00:00:00+01:00",
-      "style": "Hard Rock"
+      "style": "Alternative Rock"
     },
     {
       "id": "if06",
       "title": "Forsaken Nation",
-      "genre": "Rock",
+      "genre": "Metal",
       "language": "English",
       "album": "Infinite Frontier",
       "audio": "06-forsaken-nation.mp3",
       "coverKey": "if06",
       "tags": [
-        "Rock",
+        "Alternative Metal",
+        "Metal",
+        "Dark",
+        "Potente",
         "Oscuro"
       ],
       "isNew": false,
       "lyrics": "",
       "addedAt": "2026-01-01T00:00:00+01:00",
-      "style": "Hard Rock"
+      "style": "Alternative Metal"
     },
     {
       "id": "if07",
@@ -113,13 +129,16 @@
       "audio": "07-the-current-and-the-roar.mp3",
       "coverKey": "if07",
       "tags": [
+        "Hard Rock",
         "Rock",
-        "Épico"
+        "Épico",
+        "Fuerza",
+        "Potente"
       ],
       "isNew": false,
       "lyrics": "",
       "addedAt": "2026-01-01T00:00:00+01:00",
-      "style": "Epic Rock"
+      "style": "Hard Rock"
     },
     {
       "id": "if08",
@@ -130,8 +149,11 @@
       "audio": "08-the-forever-map.mp3",
       "coverKey": "if08",
       "tags": [
+        "Progressive Rock",
         "Rock",
-        "Viaje"
+        "Viaje",
+        "Horizonte",
+        "Expansivo"
       ],
       "isNew": false,
       "lyrics": "",
@@ -147,8 +169,10 @@
       "audio": "09-out-of-the-shadows.mp3",
       "coverKey": "if09",
       "tags": [
+        "Alternative Rock",
         "Rock",
-        "Oscuro"
+        "Oscuro",
+        "Renacer"
       ],
       "isNew": false,
       "lyrics": "",
@@ -164,8 +188,11 @@
       "audio": "10-the-late-spring.mp3",
       "coverKey": "if10",
       "tags": [
+        "Soft Rock",
         "Rock",
-        "Nostalgia"
+        "Nostalgia",
+        "Melódico",
+        "Nostálgico"
       ],
       "isNew": false,
       "lyrics": "",
@@ -181,13 +208,15 @@
       "audio": "11-the-green-elf-fades.mp3",
       "coverKey": "if11",
       "tags": [
+        "Hard Rock",
         "Rock",
-        "Místico"
+        "Místico",
+        "Potente"
       ],
       "isNew": false,
       "lyrics": "",
       "addedAt": "2026-01-01T00:00:00+01:00",
-      "style": "Progressive Rock"
+      "style": "Hard Rock"
     },
     {
       "id": "if12",
@@ -198,13 +227,16 @@
       "audio": "12-beyond-puerta-de-palma.mp3",
       "coverKey": "if12",
       "tags": [
+        "Atmospheric Rock",
         "Rock",
-        "Horizonte"
+        "Badajoz",
+        "Horizonte",
+        "Atmosférico"
       ],
       "isNew": false,
       "lyrics": "",
       "addedAt": "2026-01-01T00:00:00+01:00",
-      "style": "Melodic Rock"
+      "style": "Atmospheric Rock"
     },
     {
       "id": "if13",
@@ -215,8 +247,11 @@
       "audio": "13-midnight-rebellion.mp3",
       "coverKey": "if13",
       "tags": [
+        "Hard Rock",
         "Rock",
-        "Rebelde"
+        "Rebelde",
+        "Noche",
+        "Enérgico"
       ],
       "isNew": false,
       "lyrics": "",
@@ -232,8 +267,11 @@
       "audio": "14-playground-ashes.mp3",
       "coverKey": "if14",
       "tags": [
+        "Alternative Rock",
         "Rock",
-        "Emocional"
+        "Memoria",
+        "Emocional",
+        "Oscuro"
       ],
       "isNew": false,
       "lyrics": "",
@@ -249,8 +287,11 @@
       "audio": "15-the-untamed-engine.mp3",
       "coverKey": "if15",
       "tags": [
+        "Hard Rock",
         "Rock",
-        "Potente"
+        "Potente",
+        "Motor",
+        "Rítmico"
       ],
       "isNew": false,
       "lyrics": "",
@@ -266,8 +307,11 @@
       "audio": "16-empire-of-the-mind.mp3",
       "coverKey": "if16",
       "tags": [
+        "Progressive Rock",
         "Rock",
-        "Épico"
+        "Épico",
+        "Final",
+        "Progresivo"
       ],
       "isNew": true,
       "lyrics": "",
@@ -285,8 +329,10 @@
       "audio": "17-hoy-nos-debemos-el-dia.mp3",
       "coverKey": "SINGLE_COVER_SG17",
       "tags": [
+        "Pop Rock",
         "Pop",
-        "Español"
+        "Viaje",
+        "Melódico"
       ],
       "isNew": true,
       "lyrics": "",
@@ -301,14 +347,16 @@
       "album": "",
       "audio": "18-el-sol-del-valle.mp3",
       "tags": [
+        "Pop Rock",
         "Pop",
-        "Español"
+        "Amistad",
+        "Festivo"
       ],
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-25T00:00:00+02:00",
       "cover": "covers/18-el-sol-del-valle.jpeg",
-      "style": "Folk Pop"
+      "style": "Pop Rock"
     },
     {
       "id": "sg19",
@@ -319,8 +367,10 @@
       "audio": "19-rewriting-the-night-sky.mp3",
       "cover": "covers/19-rewriting-the-night-sky.jpeg",
       "tags": [
+        "Post-Hardcore",
         "Rock",
-        "Intenso"
+        "Alternativo",
+        "Enérgico"
       ],
       "isNew": true,
       "lyrics": "",
@@ -336,8 +386,10 @@
       "audio": "20-oneiric-landscapes.mp3",
       "cover": "covers/20-oneiric-landscapes.jpeg",
       "tags": [
+        "Atmospheric Rock",
         "Rock",
-        "Atmosférico"
+        "Atmosférico",
+        "Onírico"
       ],
       "isNew": true,
       "lyrics": "",
@@ -353,8 +405,10 @@
       "audio": "21-hypersonic-gods.mp3",
       "cover": "covers/21-hypersonic-gods.jpeg",
       "tags": [
+        "Metalcore",
         "Metal",
-        "Energía"
+        "Pesado",
+        "Enérgico"
       ],
       "isNew": true,
       "lyrics": "",
@@ -370,8 +424,10 @@
       "audio": "22-silicone-souls.mp3",
       "cover": "covers/22-silicone-souls.jpeg",
       "tags": [
+        "Industrial Rock",
         "Rock",
-        "Industrial"
+        "Industrial",
+        "Alternativo"
       ],
       "isNew": true,
       "lyrics": "",
@@ -387,8 +443,10 @@
       "audio": "23-ordinary-giants.mp3",
       "cover": "covers/23-ordinary-giants.jpeg",
       "tags": [
+        "Alternative Metal",
         "Metal",
-        "Potente"
+        "Pesado",
+        "Alternativo"
       ],
       "isNew": true,
       "lyrics": "",
@@ -404,8 +462,10 @@
       "audio": "24-the-price-of-tomorrow.mp3",
       "cover": "covers/24-the-price-of-tomorrow.jpeg",
       "tags": [
+        "Metalcore",
         "Metal",
-        "Intenso"
+        "Pesado",
+        "Rítmico"
       ],
       "isNew": true,
       "lyrics": "",
@@ -421,8 +481,10 @@
       "audio": "25-sanctuary-on-a-loop.mp3",
       "cover": "covers/25-sanctuary-on-a-loop.jpeg",
       "tags": [
+        "Alternative Rock",
         "Rock",
-        "Alternativo"
+        "Alternativo",
+        "Melódico"
       ],
       "isNew": true,
       "lyrics": "",
@@ -438,8 +500,10 @@
       "audio": "26-the-green-deliverance.mp3",
       "cover": "covers/26-the-green-deliverance.jpeg",
       "tags": [
+        "Atmospheric Rock",
         "Rock",
-        "Atmosférico"
+        "Atmosférico",
+        "Orgánico"
       ],
       "isNew": true,
       "lyrics": "",
@@ -455,8 +519,10 @@
       "audio": "27-reflections-of-education.mp3",
       "cover": "covers/27-reflections-of-education.jpeg",
       "tags": [
+        "Alternative Rock",
         "Rock",
-        "Melódico"
+        "Reflexivo",
+        "Dinámico"
       ],
       "isNew": true,
       "lyrics": "",
@@ -472,8 +538,10 @@
       "audio": "28-mist-and-neon.mp3",
       "cover": "covers/28-mist-and-neon.jpeg",
       "tags": [
+        "Synth Rock",
         "Rock",
-        "Electrónico"
+        "Sintético",
+        "Nocturno"
       ],
       "isNew": true,
       "lyrics": "",
@@ -489,8 +557,10 @@
       "audio": "29-coin-flip-destiny.mp3",
       "cover": "covers/29-coin-flip-destiny.jpeg",
       "tags": [
+        "Alternative Metal",
         "Metal",
-        "Potente"
+        "Pesado",
+        "Dinámico"
       ],
       "isNew": true,
       "lyrics": "",
@@ -506,8 +576,10 @@
       "audio": "30-rainbow-lies.mp3",
       "cover": "covers/30-rainbow-lies.jpeg",
       "tags": [
+        "Pop Rock",
         "Rock",
-        "Melódico"
+        "Melódico",
+        "Enérgico"
       ],
       "isNew": true,
       "lyrics": "",
@@ -523,7 +595,9 @@
       "audio": "31-the-wind-of-rebirth.mp3",
       "cover": "covers/31-the-wind-of-rebirth.jpeg",
       "tags": [
+        "Symphonic Rock",
         "Rock",
+        "Sinfónico",
         "Épico"
       ],
       "isNew": true,
@@ -540,8 +614,10 @@
       "audio": "32-mechanical-apathy.mp3",
       "cover": "covers/32-mechanical-apathy.jpeg",
       "tags": [
+        "Industrial Metal",
         "Metal",
-        "Industrial"
+        "Industrial",
+        "Oscuro"
       ],
       "isNew": true,
       "lyrics": "",
@@ -557,8 +633,10 @@
       "audio": "33-the-faithful-gateway.mp3",
       "cover": "covers/33-the-faithful-gateway.jpeg",
       "tags": [
+        "Progressive Metal",
         "Metal",
-        "Progresivo"
+        "Progresivo",
+        "Pesado"
       ],
       "isNew": true,
       "lyrics": "",
@@ -574,8 +652,10 @@
       "audio": "34-cathedrals-of-stardust.mp3",
       "cover": "covers/34-cathedrals-of-stardust.jpeg",
       "tags": [
+        "Progressive Rock",
         "Rock",
-        "Progresivo"
+        "Progresivo",
+        "Atmosférico"
       ],
       "isNew": true,
       "lyrics": "",
@@ -591,7 +671,9 @@
       "audio": "35-the-apathy-cage.mp3",
       "cover": "covers/35-the-apathy-cage.jpeg",
       "tags": [
+        "Metalcore",
         "Metal",
+        "Pesado",
         "Intenso"
       ],
       "isNew": true,
@@ -608,8 +690,10 @@
       "audio": "36-rave-from-the-cage.mp3",
       "cover": "covers/36-rave-from-the-cage.jpeg",
       "tags": [
+        "Metalcore",
         "Metal",
-        "Intenso"
+        "Electrónico",
+        "Pesado"
       ],
       "isNew": true,
       "lyrics": "",
@@ -625,8 +709,10 @@
       "audio": "37-wild-radical.mp3",
       "cover": "covers/37-wild-radical.jpeg",
       "tags": [
+        "Hard Rock",
         "Rock",
-        "Potente"
+        "Potente",
+        "Enérgico"
       ],
       "isNew": true,
       "lyrics": "",
@@ -642,8 +728,10 @@
       "audio": "38-the-absolute-apex.mp3",
       "cover": "covers/38-the-absolute-apex.jpeg",
       "tags": [
+        "Progressive Rock",
         "Rock",
-        "Progresivo"
+        "Progresivo",
+        "Dinámico"
       ],
       "isNew": true,
       "lyrics": "",
@@ -659,8 +747,10 @@
       "audio": "39-drifting-beyond-the-touch.mp3",
       "cover": "covers/39-drifting-beyond-the-touch.jpeg",
       "tags": [
+        "Post-Rock",
         "Rock",
-        "Atmosférico"
+        "Atmosférico",
+        "Expansivo"
       ],
       "isNew": true,
       "lyrics": "",
@@ -676,13 +766,15 @@
       "audio": "40-the-kingdom-of-dawn.mp3",
       "cover": "covers/40-the-kingdom-of-dawn.jpeg",
       "tags": [
+        "Symphonic Rock",
         "Rock",
-        "Épico"
+        "Épico",
+        "Sinfónico"
       ],
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Epic Rock"
+      "style": "Symphonic Rock"
     },
     {
       "id": "sg41",
@@ -693,8 +785,10 @@
       "audio": "41-the-reunion-chronicles.mp3",
       "cover": "covers/41-the-reunion-chronicles.jpeg",
       "tags": [
+        "Progressive Metal",
         "Metal",
-        "Progresivo"
+        "Progresivo",
+        "Pesado"
       ],
       "isNew": true,
       "lyrics": "",
@@ -710,8 +804,10 @@
       "audio": "42-the-gravity-of-latent-orbits.mp3",
       "cover": "covers/42-the-gravity-of-latent-orbits.jpeg",
       "tags": [
+        "Post-Rock",
         "Rock",
-        "Atmosférico"
+        "Atmosférico",
+        "Progresivo"
       ],
       "isNew": true,
       "lyrics": "",
@@ -721,19 +817,21 @@
     {
       "id": "sg43",
       "title": "PÁJAROS DE CRISTAL (LA INFANCIA OLVIDADA)",
-      "genre": "Metal",
+      "genre": "Rock",
       "language": "Spanish",
       "album": "",
       "audio": "43-pajaros-de-cristal-la-infancia-olvidada.mp3",
       "cover": "covers/43-pajaros-de-cristal-la-infancia-olvidada.jpeg",
       "tags": [
-        "Metal",
-        "Cinemático"
+        "Symphonic Rock",
+        "Rock",
+        "Sinfónico",
+        "Hard Rock"
       ],
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T11:42:00+02:00",
-      "style": "Symphonic Metal"
+      "style": "Symphonic Rock"
     },
     {
       "id": "sg44",
@@ -744,13 +842,72 @@
       "audio": "44-el-arte-de-desaparecer.mp3",
       "cover": "covers/44-el-arte-de-desaparecer.jpeg",
       "tags": [
+        "Orchestral Pop",
         "Pop",
-        "Íntimo"
+        "Acústico",
+        "Orquestal"
       ],
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T11:42:00+02:00",
-      "style": "Acoustic Pop"
+      "style": "Orchestral Pop"
+    },
+    {
+      "id": "sg45",
+      "title": "LA NOCHE NO SABE CONTAR",
+      "genre": "Rock",
+      "style": "Pop Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "45-la-noche-no-sabe-contar.mp3",
+      "cover": "covers/45-la-noche-no-sabe-contar.jpeg",
+      "tags": [
+        "Pop Rock",
+        "Rock",
+        "Rock melódico",
+        "Nocturno"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-29T01:10:00+02:00"
+    },
+    {
+      "id": "sg46",
+      "title": "FUEGO EN EL COLCHÓN",
+      "genre": "Rock",
+      "style": "Garage Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "46-fuego-en-el-colchon.mp3",
+      "cover": "covers/46-fuego-en-el-colchon.jpeg",
+      "tags": [
+        "Garage Rock",
+        "Rock",
+        "Pop Rock",
+        "Enérgico"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-29T01:10:00+02:00"
+    },
+    {
+      "id": "sg47",
+      "title": "DONDE EL AMOR VENCE",
+      "genre": "Pop",
+      "style": "Orchestral Pop",
+      "language": "Spanish",
+      "album": "",
+      "audio": "47-donde-el-amor-vence.mp3",
+      "cover": "covers/47-donde-el-amor-vence.jpeg",
+      "tags": [
+        "Orchestral Pop",
+        "Pop",
+        "Orquestal",
+        "Balada"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-29T01:10:00+02:00"
     }
   ]
 }
