@@ -1197,7 +1197,7 @@ img, video, canvas, svg { max-width:100%; }
   </div>
 </div>
 
-<audio id="audio" preload="auto" playsinline data-player-version="V10"></audio>
+<audio id="audio" preload="auto" playsinline data-player-version="V11"></audio>
 
 <script>
 /* ============================================================
@@ -1814,9 +1814,43 @@ function toggleLike(id,event=null){
 }
 
 function syncPlayerHistory(songId){
-  if(history.state?.mcApp===APP_HISTORY && history.state.view==='player'){
-    history.replaceState({mcApp:APP_HISTORY,view:'player',song:songId},document.title,location.href);
+  // El historial es solo interfaz, nunca debe poder bloquear un cambio de audio.
+  // En segundo plano Android puede considerar el documento no plenamente activo;
+  // por eso evitamos History API mientras está oculto y protegemos la operación.
+  if(document.visibilityState!=='visible')return;
+  try{
+    if(history.state?.mcApp===APP_HISTORY && history.state.view==='player'){
+      history.replaceState({mcApp:APP_HISTORY,view:'player',song:songId},document.title,location.href);
+    }
+  }catch(err){console.warn('[Music Creations] Historial no disponible durante reproducción:',err)}
+}
+function prepareAudioSource(song){
+  if(!song)return false;
+  const target=REPO_BASE+song.audio;
+  const sourceChanged=audio.getAttribute('src')!==target;
+  if(sourceChanged){
+    try{audio.pause()}catch{}
+    audio.src=target;
+    audio.preload='auto';
+    audio.load();
   }
+  return sourceChanged;
+}
+function refreshTrackUI(sourceChanged=false){
+  // Todo lo visual es deliberadamente secundario al audio. Si la app está
+  // bloqueada/minimizada, no reconstruimos DOM pesado: se refresca al volver.
+  if(document.visibilityState!=='visible')return;
+  try{
+    updateModal();
+    if(sourceChanged){
+      document.getElementById('cur').textContent='0:00';
+      document.getElementById('dur').textContent='0:00';
+      document.getElementById('fill').style.width='0%';
+      document.getElementById('miniFill').style.width='0%';
+    }
+    renderQueue();fillQueueSelect();updateMediaSessionQueue();
+    document.getElementById('mini').classList.add('visible');
+  }catch(err){console.warn('[Music Creations] UI secundaria no pudo refrescarse:',err)}
 }
 function switchTrack(id,{autoplay=true,remember=true}={}){
   const global=allSongs().findIndex(s=>s.id===id);
@@ -1828,19 +1862,18 @@ function switchTrack(id,{autoplay=true,remember=true}={}){
   }
   state.current=allSongs()[global];state.index=global;
   state.switchingTrack=true;
-  // Activamos autoplay ANTES de cambiar src. Así el mismo elemento <audio>
-  // conserva explícitamente la intención de reproducción al encadenar pistas
-  // en segundo plano, además del play() que hacemos como confirmación.
-  if(autoplay){state.userPaused=false;audio.autoplay=true}
-  updateModal();
-  renderQueue();fillQueueSelect();updateMediaSessionQueue();
-  document.getElementById('mini').classList.add('visible');
+  if(autoplay)state.userPaused=false;
+
+  // V11: el camino crítico es AUDIO PRIMERO. Ninguna actualización visual,
+  // de historial o de cola puede impedir que la pista siguiente arranque.
+  const sourceChanged=prepareAudioSource(state.current);
+  updateMediaMetadata(state.current);
+  const startPromise=autoplay?play():Promise.resolve(true);
+
+  // Lo no esencial se hace después de haber solicitado la reproducción.
+  refreshTrackUI(sourceChanged);
   syncPlayerHistory(id);
-  if(autoplay){
-    play().then(()=>{state.switchingTrack=false});
-  }else{
-    queueMicrotask(()=>{state.switchingTrack=false});
-  }
+  Promise.resolve(startPromise).finally(()=>{state.switchingTrack=false});
   return true;
 }
 function openSong(id,autoplay=true,fromHistory=false){
@@ -1866,42 +1899,22 @@ function updateModal(){
   document.getElementById('miniTitle').textContent=s.title;
   document.getElementById('miniArtist').textContent=s.album||`${style} · Berto Antúnez`;
   updatePlayerLike();renderReviews();
+  // V11: updateModal es exclusivamente visual. La fuente de audio se prepara
+  // antes, dentro de switchTrack(), para que una excepción de UI nunca pueda
+  // dejar la siguiente canción sin reproducir.
   const target=REPO_BASE+s.audio;
-  // HOTFIX V9: mantenemos UN SOLO elemento <audio>, pero al cambiar de pista
-  // hacemos una carga explícita. En Android/PWA, asignar src y llamar a
-  // play() inmediatamente sin load() puede dejar el recurso en estado
-  // HAVE_NOTHING/NETWORK_EMPTY y la reproducción no arranca. pause()+load()
-  // se ejecuta con state.switchingTrack=true, por lo que el pause transitorio
-  // NO se interpreta como una pausa del usuario ni rompe la cola continua.
   const sourceChanged=audio.getAttribute('src')!==target;
   if(sourceChanged){
-    try{audio.pause()}catch{}
-    audio.src=target;
-    audio.preload='auto';
-    audio.load();
-    document.getElementById('cur').textContent='0:00';
-    document.getElementById('dur').textContent='0:00';
-    document.getElementById('fill').style.width='0%';
-    document.getElementById('miniFill').style.width='0%';
-  }else{
-    // Al volver desde el historial o reabrir el overlay no tocamos la
-    // posición de una pista que sigue sonando en segundo plano.
-    document.getElementById('cur').textContent=fmt(audio.currentTime);
-    document.getElementById('dur').textContent=fmt(audio.duration);
-    const progress=audio.duration?(audio.currentTime/audio.duration)*100:0;
-    document.getElementById('fill').style.width=progress+'%';
-    document.getElementById('miniFill').style.width=progress+'%';
+    // Solo puede ocurrir al abrir una vista sin haber pasado por switchTrack.
+    prepareAudioSource(s);
   }
+  document.getElementById('cur').textContent=fmt(audio.currentTime);
+  document.getElementById('dur').textContent=fmt(audio.duration);
+  const progress=audio.duration?(audio.currentTime/audio.duration)*100:0;
+  document.getElementById('fill').style.width=progress+'%';
+  document.getElementById('miniFill').style.width=progress+'%';
   updatePlayerLike();
-  if('mediaSession' in navigator){
-    try{
-      const art=artworkSrc(s);
-      navigator.mediaSession.metadata=new MediaMetadata({
-        title:s.title,artist:'Berto Antúnez',album:s.album||style||'Single',
-        artwork:art?[{src:art,type:/\.png(?:\?|$)/i.test(art)?'image/png':'image/jpeg'}]:[]
-      });
-    }catch{}
-  }
+  updateMediaMetadata(s);
 }
 
 function updatePlayerLike(){
@@ -1918,9 +1931,37 @@ function updatePlayerLike(){
   }
 }
 
+function mediaArtworkFor(song){
+  const art=artworkSrc(song);
+  // Android/Chromium es mucho más estable con URLs HTTP(S) pequeñas que con
+  // carátulas base64 gigantes. Para las portadas incrustadas usamos el icono
+  // de la propia PWA en la notificación; las portadas externas sí se muestran.
+  if(art && !String(art).startsWith('data:')){
+    return [{src:new URL(art,location.href).href,type:/\.png(?:\?|$)/i.test(art)?'image/png':'image/jpeg'}];
+  }
+  return [{src:new URL('icons/icon-512.png',location.href).href,sizes:'512x512',type:'image/png'}];
+}
+function updateMediaMetadata(song=state.current){
+  if(!song||!('mediaSession' in navigator)||typeof MediaMetadata==='undefined')return;
+  const style=song.style||song.genre||'Single';
+  const basic={title:song.title,artist:'Berto Antúnez',album:song.album||style||'Single'};
+  try{
+    navigator.mediaSession.metadata=new MediaMetadata({...basic,artwork:mediaArtworkFor(song)});
+  }catch(err){
+    // Una portada nunca debe invalidar toda la sesión del sistema.
+    try{navigator.mediaSession.metadata=new MediaMetadata(basic)}catch{}
+  }
+}
+function refreshSystemMediaSession(){
+  if(!state.current||!('mediaSession' in navigator))return;
+  updateMediaMetadata(state.current);
+  try{navigator.mediaSession.playbackState=audio.paused?'paused':'playing'}catch{}
+  updateMediaSessionQueue();
+}
+
 function play(){
   if(!state.current)return Promise.resolve(false);
-  state.userPaused=false;audio.autoplay=true;
+  state.userPaused=false;
   let result;
   try{result=audio.play()}catch(err){result=Promise.reject(err)}
   return Promise.resolve(result).then(()=>{
@@ -1944,7 +1985,7 @@ function play(){
     state.playing=!audio.paused;updatePlayIcons();setMediaState(audio.paused?'paused':'playing');return false;
   });
 }
-function pause(){audio.autoplay=false;audio.pause();state.userPaused=true;state.playing=false;updatePlayIcons();setMediaState('paused')}
+function pause(){audio.pause();state.userPaused=true;state.playing=false;updatePlayIcons();setMediaState('paused')}
 function togglePlay(){audio.paused?play():pause()}
 function updatePlayIcons(){
   const icon=state.playing&&!audio.paused?'Ⅱ':'▶';
@@ -2043,10 +2084,16 @@ function initAudio(){
     document.getElementById('cur').textContent=fmt(audio.currentTime); updateMediaSessionQueue();
   });
   audio.addEventListener('play',()=>{state.playing=true;state.userPaused=false;updatePlayIcons();setMediaState('playing')});
+  audio.addEventListener('playing',()=>{state.playing=true;state.userPaused=false;updatePlayIcons();refreshSystemMediaSession()});
   audio.addEventListener('pause',()=>{
     // Un pause transitorio durante un cambio de src no debe interpretarse
     // como fin de sesión. El siguiente play actualizará inmediatamente el UI.
     if(!state.switchingTrack){state.playing=false;updatePlayIcons();setMediaState('paused')}
+  });
+  audio.addEventListener('canplay',()=>{
+    // Recuperación prudente: si Android terminó de cargar una pista encadenada
+    // y quedó pausada sin petición del usuario, reanudamos esa misma pista.
+    if(state.current&&!state.userPaused&&state.switchingTrack&&audio.paused)play();
   });
   audio.addEventListener('ended',()=>{
     if(state.repeat){audio.currentTime=0;play()}else nextTrack('ended');
@@ -2069,7 +2116,7 @@ function initMediaSession(){
   if('audioSession' in navigator){try{navigator.audioSession.type='playback'}catch{}}
   if(!('mediaSession' in navigator))return;
   const actions={
-    play:()=>play(),pause:()=>pause(),stop:()=>pause(),
+    play:()=>play().then(()=>refreshSystemMediaSession()),pause:()=>pause(),stop:()=>pause(),
     previoustrack:()=>previousTrack(),nexttrack:()=>nextTrack('media-session'),
     seekbackward:(details)=>{audio.currentTime=Math.max(0,audio.currentTime-(details?.seekOffset||10))},
     seekforward:(details)=>{audio.currentTime=Math.min(audio.duration||0,audio.currentTime+(details?.seekOffset||10))},
@@ -2079,16 +2126,22 @@ function initMediaSession(){
 }
 
 function keepPlaybackOnBackground(){
-  // No existe ninguna orden que pause por visibilitychange/pagehide. Mientras
-  // el proceso de la PWA siga vivo, el mismo <audio> y la misma Media Session
-  // continúan siendo la fuente de verdad para pantalla bloqueada, Bluetooth,
-  // controles del coche, auriculares y notificación multimedia de Android.
+  // No pausamos nunca por visibilitychange/pagehide. La Media Session se
+  // reafirma al minimizar, bloquear y volver a primer plano.
   document.addEventListener('visibilitychange',()=>{
-    if(state.current&&'mediaSession' in navigator){
-      try{navigator.mediaSession.playbackState=audio.paused?'paused':'playing'}catch{}
+    refreshSystemMediaSession();
+    if(document.visibilityState==='visible'&&state.current){
+      refreshTrackUI(false);
     }
   });
-  window.addEventListener('pageshow',()=>{if(state.current)updateMediaSessionQueue()});
+  window.addEventListener('pageshow',()=>{if(state.current){refreshSystemMediaSession();refreshTrackUI(false)}});
+
+  // Red de seguridad para transiciones perdidas por suspensión parcial del
+  // navegador. Nunca actúa si el usuario ha pulsado Pausa.
+  setInterval(()=>{
+    if(!state.current||state.userPaused||state.switchingTrack)return;
+    if(audio.ended)nextTrack('watchdog-ended');
+  },5000);
 }
 
 async function init(){
