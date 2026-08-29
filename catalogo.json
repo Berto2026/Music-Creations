@@ -1,5 +1,5 @@
 {
-  "version": 9,
+  "version": 10,
   "artist": "Berto Antúnez",
   "songs": [
     {
@@ -988,6 +988,26 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-29T10:55:00+02:00"
+    },
+    {
+      "id": "sg52",
+      "title": "EL SISTEMA ME HIZO ASÍ",
+      "genre": "Rock",
+      "style": "Alternative Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "52-el-sistema-me-hizo-asi.mp3",
+      "cover": "covers/52-el-sistema-me-hizo-asi.jpeg",
+      "tags": [
+        "Alternative Rock",
+        "Rock",
+        "Crítica social",
+        "Narrativo",
+        "Urbano"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-29T11:39:00+02:00"
     }
   ]
 }
