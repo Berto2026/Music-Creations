@@ -1,5 +1,5 @@
 {
-  "version": 7,
+  "version": 8,
   "artist": "Berto Antúnez",
   "songs": [
     {
@@ -908,6 +908,26 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-29T01:10:00+02:00"
+    },
+    {
+      "id": "sg48",
+      "title": "ESPAÑA EN MODO AVIÓN",
+      "genre": "Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "48-espana-en-modo-avion.mp3",
+      "cover": "covers/48-espana-en-modo-avion.jpeg",
+      "tags": [
+        "Rap Rock",
+        "Rock",
+        "Crítica social",
+        "España",
+        "Rítmico"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-29T03:51:00+02:00",
+      "style": "Rap Rock"
     }
   ]
 }
