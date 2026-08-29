@@ -1197,7 +1197,7 @@ img, video, canvas, svg { max-width:100%; }
   </div>
 </div>
 
-<audio id="audio" preload="auto" playsinline data-player-version="V11"></audio>
+<audio id="audio" preload="auto" playsinline data-player-version="V12-MSE-CONTINUOUS"></audio>
 
 <script>
 /* ============================================================
@@ -1417,6 +1417,460 @@ const state = {
 
 const audio = document.getElementById('audio');
 
+
+/* ============================================================
+   V12 · MOTOR DE AUDIO CONTINUO (MSE)
+   ------------------------------------------------------------
+   Objetivo: mantener UNA única fuente multimedia activa mientras se
+   encadenan canciones. En Android/Chrome, cambiar audio.src al terminar
+   cada MP3 puede cerrar el foco/sesión multimedia entre pistas. Con MSE,
+   los MP3 se añaden como segmentos consecutivos a un SourceBuffer
+   audio/mpeg en modo "sequence"; el <audio> no termina entre canciones.
+
+   - La cola manual conserva prioridad.
+   - El autoplay infinito sigue usando playbackContext/autoUpcoming.
+   - Media Session permanece asociada al mismo <audio> y mismo src blob.
+   - Se precargan varias canciones al ocultar/bloquear la PWA.
+   - Si MSE audio/mpeg no está disponible, se usa el motor legado V11.
+   ============================================================ */
+const TRACK_DURATION_HINTS=Object.freeze({"if01":318.504,"if02":248.88,"if03":284.232,"if04":327.864,"if05":275.52,"if06":234.144,"if07":243.192,"if08":273.96,"if09":286.632,"if10":293.544,"if11":298.68,"if12":308.64,"if13":325.032,"if14":299.832,"if15":277.992,"if16":404.544,"sg17":315.192,"sg18":214.992,"sg19":276.624,"sg20":281.832,"sg21":285.144,"sg22":245.04,"sg23":322.632,"sg24":254.952,"sg25":340.944,"sg26":329.76,"sg27":253.512,"sg28":319.08,"sg29":273.984,"sg30":208.944,"sg31":329.952,"sg32":314.88,"sg33":335.352,"sg34":480.0,"sg35":307.392,"sg36":317.52,"sg37":253.224,"sg38":364.992,"sg39":337.512,"sg40":379.824,"sg41":480.0,"sg42":325.032,"sg43":355.464,"sg44":232.392,"sg45":480.0,"sg46":300.624,"sg47":437.712});
+const CONTINUOUS_AUDIO={
+  supported:typeof MediaSource!=='undefined'&&typeof MediaSource.isTypeSupported==='function'&&MediaSource.isTypeSupported('audio/mpeg'),
+  active:false,starting:false,generation:0,mediaSource:null,sourceBuffer:null,objectUrl:'',
+  segments:[],currentIndex:-1,fillPromise:null,headPromise:null,fillTarget:0,stalled:false,failedIds:new Set(),
+  planRevision:0,rebaseTimer:0
+};
+
+function continuousActive(){return !!(CONTINUOUS_AUDIO.active&&CONTINUOUS_AUDIO.mediaSource&&CONTINUOUS_AUDIO.sourceBuffer)}
+function continuousSegment(index=CONTINUOUS_AUDIO.currentIndex){return CONTINUOUS_AUDIO.segments[index]||null}
+function continuousCurrentStart(){return continuousSegment()?.start||0}
+function continuousCurrentDuration(){const s=continuousSegment();if(!s)return 0;const actual=Number.isFinite(s.end)&&s.end>s.start?s.end-s.start:0;if(s.complete&&actual>.05)return actual;const hint=TRACK_DURATION_HINTS[s.id];if(Number.isFinite(hint)&&hint>0)return hint;return actual}
+function continuousCurrentTime(){return Math.max(0,(audio.currentTime||0)-continuousCurrentStart())}
+function playerTrackDuration(){const d=continuousActive()?continuousCurrentDuration():audio.duration;return Number.isFinite(d)&&d>0?d:0}
+function playerTrackTime(){return continuousActive()?continuousCurrentTime():(Number.isFinite(audio.currentTime)?audio.currentTime:0)}
+function playerTrackSeek(seconds){
+  const d=playerTrackDuration();if(!d)return;
+  const pos=Math.max(0,Math.min(Number(seconds)||0,d));
+  audio.currentTime=continuousActive()?continuousCurrentStart()+pos:pos;
+}
+function continuousFutureCount(){return Math.max(0,CONTINUOUS_AUDIO.segments.length-CONTINUOUS_AUDIO.currentIndex-1)}
+function continuousIsBuffered(time){
+  try{for(let i=0;i<audio.buffered.length;i++)if(time>=audio.buffered.start(i)&&time<=audio.buffered.end(i))return true}catch{}
+  return false;
+}
+function continuousWaitEvent(target,okName,errorName,generation){
+  return new Promise((resolve,reject)=>{
+    const ok=()=>{cleanup();generation===CONTINUOUS_AUDIO.generation?resolve():reject(new DOMException('Fuente sustituida','AbortError'))};
+    const fail=()=>{cleanup();reject(new Error(errorName||'Media error'))};
+    const cleanup=()=>{target.removeEventListener(okName,ok);if(errorName)target.removeEventListener(errorName,fail)};
+    target.addEventListener(okName,ok,{once:true});if(errorName)target.addEventListener(errorName,fail,{once:true});
+  });
+}
+async function continuousWaitBufferIdle(sb,generation){
+  if(generation!==CONTINUOUS_AUDIO.generation)throw new DOMException('Fuente sustituida','AbortError');
+  if(!sb.updating)return;
+  await continuousWaitEvent(sb,'updateend','error',generation);
+}
+function continuousReleaseSource(){
+  CONTINUOUS_AUDIO.generation++;
+  CONTINUOUS_AUDIO.active=false;CONTINUOUS_AUDIO.starting=false;CONTINUOUS_AUDIO.stalled=false;
+  CONTINUOUS_AUDIO.fillTarget=0;CONTINUOUS_AUDIO.fillPromise=null;CONTINUOUS_AUDIO.headPromise=null;CONTINUOUS_AUDIO.planRevision++;
+  const sb=CONTINUOUS_AUDIO.sourceBuffer;
+  try{if(sb?.updating)sb.abort()}catch{}
+  const old=CONTINUOUS_AUDIO.objectUrl;
+  CONTINUOUS_AUDIO.mediaSource=null;CONTINUOUS_AUDIO.sourceBuffer=null;CONTINUOUS_AUDIO.objectUrl='';
+  CONTINUOUS_AUDIO.segments=[];CONTINUOUS_AUDIO.currentIndex=-1;CONTINUOUS_AUDIO.failedIds=new Set();
+  if(old){setTimeout(()=>{try{URL.revokeObjectURL(old)}catch{}},0)}
+}
+function continuousRemoveFirst(arr,id){const i=arr.indexOf(id);if(i>=0)arr.splice(i,1);return i>=0}
+function continuousConsumeSegment(seg){
+  if(!seg||seg.consumed)return;seg.consumed=true;
+  if(seg.origin==='manual'){
+    continuousRemoveFirst(state.manualQueue,seg.id);continuousRemoveFirst(state.autoUpcoming,seg.id);queueSave();
+  }else if(seg.origin==='auto'){
+    continuousRemoveFirst(state.autoUpcoming,seg.id);
+  }
+}
+function continuousReservedIds(){return new Set(CONTINUOUS_AUDIO.segments.slice(CONTINUOUS_AUDIO.currentIndex+1).map(x=>x.id))}
+function continuousExtendAutoCycle(){
+  const previous=[...state.autoUpcoming];
+  const anchor=CONTINUOUS_AUDIO.segments.at(-1)?.id||state.current?.id;
+  rebuildAutoUpcoming(anchor);
+  const fresh=[...state.autoUpcoming];
+  state.autoUpcoming=previous.concat(fresh);
+}
+function continuousPlanNext(){
+  const reserved=continuousReservedIds();
+  for(const id of state.manualQueue){
+    if(id!==state.current?.id&&!reserved.has(id)&&!CONTINUOUS_AUDIO.failedIds.has(id)&&queueSong(id))return {id,origin:'manual'};
+  }
+  if(!state.autoUpcoming.length)rebuildAutoUpcoming(CONTINUOUS_AUDIO.segments.at(-1)?.id||state.current?.id);
+  let id=state.autoUpcoming.find(x=>x!==state.current?.id&&!reserved.has(x)&&!CONTINUOUS_AUDIO.failedIds.has(x)&&queueSong(x));
+  if(!id){
+    continuousExtendAutoCycle();
+    id=state.autoUpcoming.find(x=>x!==state.current?.id&&!reserved.has(x)&&!CONTINUOUS_AUDIO.failedIds.has(x)&&queueSong(x));
+  }
+  return id?{id,origin:'auto'}:null;
+}
+async function continuousEvictPast(){
+  const sb=CONTINUOUS_AUDIO.sourceBuffer,g=CONTINUOUS_AUDIO.generation;
+  if(!sb||g!==CONTINUOUS_AUDIO.generation)return false;
+  // En repetición conservamos el inicio de la canción para poder volver a él.
+  if(state.repeat)return false;
+  let first=Infinity;
+  try{if(sb.buffered.length)first=sb.buffered.start(0)}catch{}
+  // Conservamos ~35 s detrás del punto actual para permitir Anterior/seek
+  // corto, y liberamos lo ya reproducido. Esto mantiene el SourceBuffer muy
+  // por debajo de la cuota de audio de Chrome, que puede ser reducida.
+  const cutoff=Math.max(0,(audio.currentTime||0)-35);
+  if(!(cutoff>first+2))return false;
+  try{
+    await continuousWaitBufferIdle(sb,g);
+    sb.remove(first,cutoff);
+    await continuousWaitBufferIdle(sb,g);
+    return true;
+  }catch(err){if(err?.name!=='AbortError')console.warn('[Music Creations] Evicción de buffer no disponible:',err);return false}
+}
+function continuousWaitPlaybackAdvance(generation,fromTime=audio.currentTime||0,valid=()=>true){
+  return new Promise((resolve,reject)=>{
+    const abort=()=>{cleanup();reject(new DOMException('Plan de cola actualizado','AbortError'))};
+    const onTime=()=>{
+      if(generation!==CONTINUOUS_AUDIO.generation||!valid()){abort();return}
+      if((audio.currentTime||0)>=fromTime+2.5){cleanup();resolve()}
+    };
+    const onProgress=()=>{
+      if(generation===CONTINUOUS_AUDIO.generation&&valid()){cleanup();resolve()}else abort();
+    };
+    const onPlan=()=>{if(!valid())abort()};
+    const cleanup=()=>{audio.removeEventListener('timeupdate',onTime);audio.removeEventListener('playing',onProgress);document.removeEventListener('mc-planchange',onPlan)};
+    audio.addEventListener('timeupdate',onTime);audio.addEventListener('playing',onProgress,{once:true});document.addEventListener('mc-planchange',onPlan);
+    if(!valid())abort();
+  });
+}
+async function continuousAppendChunk(bytes,generation,valid=()=>true){
+  const sb=CONTINUOUS_AUDIO.sourceBuffer;if(!sb)return;
+  let attempts=0;
+  while(generation===CONTINUOUS_AUDIO.generation){
+    if(!valid())throw new DOMException('Plan de cola actualizado','AbortError');
+    await continuousWaitBufferIdle(sb,generation);
+    if(!valid())throw new DOMException('Plan de cola actualizado','AbortError');
+    try{
+      sb.appendBuffer(bytes);
+      await continuousWaitBufferIdle(sb,generation);
+      if(!valid())throw new DOMException('Plan de cola actualizado','AbortError');
+      return;
+    }catch(err){
+      if(err?.name==='AbortError')throw err;
+      if(err?.name!=='QuotaExceededError')throw err;
+      if(!valid())throw new DOMException('Plan de cola actualizado','AbortError');
+      const freed=await continuousEvictPast();
+      if(!freed){
+        const t=audio.currentTime||0;
+        await continuousWaitPlaybackAdvance(generation,t,valid);
+        if(!valid())throw new DOMException('Plan de cola actualizado','AbortError');
+        await continuousEvictPast();
+      }
+      if(++attempts>80)throw new Error('No se pudo liberar espacio del buffer de audio');
+    }
+  }
+  throw new DOMException('Fuente sustituida','AbortError');
+}
+async function continuousFetchSong(song,generation){
+  const response=await fetch(REPO_BASE+song.audio,{cache:'force-cache'});
+  if(generation!==CONTINUOUS_AUDIO.generation)throw new DOMException('Fuente sustituida','AbortError');
+  if(!response.ok)throw new Error(`HTTP ${response.status} · ${song.audio}`);
+  return response;
+}
+async function continuousAppendPlanned(plan,{current=false,planRevision=null,onPlayable=null}={}){
+  const g=CONTINUOUS_AUDIO.generation,sb=CONTINUOUS_AUDIO.sourceBuffer;
+  const song=queueSong(plan?.id);if(!song||!sb)throw new Error('Canción no disponible para buffer continuo');
+  const futureRevision=current?null:(planRevision??CONTINUOUS_AUDIO.planRevision);
+  const stale=()=>!current&&futureRevision!==CONTINUOUS_AUDIO.planRevision;
+  if(stale())throw new DOMException('Plan de cola actualizado','AbortError');
+  const response=await continuousFetchSong(song,g);
+  if(g!==CONTINUOUS_AUDIO.generation)throw new DOMException('Fuente sustituida','AbortError');
+  if(stale())throw new DOMException('Plan de cola actualizado','AbortError');
+  await continuousWaitBufferIdle(sb,g);
+  let start=CONTINUOUS_AUDIO.segments.at(-1)?.end||0;
+  try{if(sb.buffered.length)start=Math.max(start,sb.buffered.end(sb.buffered.length-1))}catch{}
+  const seg={id:song.id,origin:current?'direct':plan.origin,start,end:start,consumed:current,complete:false};
+  CONTINUOUS_AUDIO.segments.push(seg);if(current)CONTINUOUS_AUDIO.currentIndex=0;
+  let playableSent=false;
+
+  const appendPiece=async piece=>{
+    if(!piece?.byteLength)return;
+    if(stale())throw new DOMException('Plan de cola actualizado','AbortError');
+    await continuousAppendChunk(piece,g,()=>!stale());
+    let end=seg.end;
+    try{
+      if(sb.buffered.length){
+        // El primer MP3 puede contener una cabecera ID3 amplia y Chromium
+        // empezar su rango reproducible unos instantes después de 0. Ajustamos
+        // solo el origen del primer segmento para que el reloj visible empiece
+        // realmente en 0:00 sin alterar la continuidad de los siguientes.
+        if(current&&CONTINUOUS_AUDIO.segments.length===1&&seg.start===0){
+          const firstBuffered=sb.buffered.start(0);if(firstBuffered>0&&firstBuffered<10)seg.start=firstBuffered;
+        }
+        end=sb.buffered.end(sb.buffered.length-1);
+      }
+    }catch{}
+    if(end>seg.end)seg.end=end;
+    if(current&&!playableSent&&seg.end>seg.start+.20){
+      playableSent=true;
+      try{onPlayable?.(seg)}catch{}
+    }
+  };
+
+  // ReadableStream evita cargar un MP3 completo (5–11 MB) en SourceBuffer de
+  // una sola vez. Chrome puede limitar el buffer de audio, por lo que añadimos
+  // fragmentos pequeños y aplicamos backpressure/evicción de audio ya oído.
+  if(response.body?.getReader){
+    const reader=response.body.getReader();
+    try{
+      while(true){
+        const {done,value}=await reader.read();
+        if(done)break;
+        if(g!==CONTINUOUS_AUDIO.generation)throw new DOMException('Fuente sustituida','AbortError');
+        if(stale())throw new DOMException('Plan de cola actualizado','AbortError');
+        if(value?.byteLength)await appendPiece(value);
+      }
+    }finally{try{await reader.cancel()}catch{};try{reader.releaseLock()}catch{}}
+  }else{
+    const whole=new Uint8Array(await response.arrayBuffer());
+    const CHUNK=256*1024;
+    for(let i=0;i<whole.byteLength;i+=CHUNK){
+      if(stale())throw new DOMException('Plan de cola actualizado','AbortError');
+      await appendPiece(whole.slice(i,Math.min(whole.byteLength,i+CHUNK)));
+    }
+  }
+  seg.complete=true;
+  if(current){
+    try{if(sb.buffered.length){const firstBuffered=sb.buffered.start(0);if(firstBuffered>0&&firstBuffered<10)seg.start=firstBuffered}}catch{}
+  }
+  if(!(seg.end>seg.start+.05))throw new Error(`El segmento ${song.audio} no generó duración reproducible`);
+  if(current&&!playableSent){playableSent=true;try{onPlayable?.(seg)}catch{}}
+  if(current)continuousRefreshCurrentUI();
+  return seg;
+}
+async function continuousEnsureAhead(count){
+  if(!continuousActive()||state.repeat)return false;
+  CONTINUOUS_AUDIO.fillTarget=Math.max(CONTINUOUS_AUDIO.fillTarget,Math.max(0,count|0));
+  if(CONTINUOUS_AUDIO.fillPromise)return CONTINUOUS_AUDIO.fillPromise;
+  const g=CONTINUOUS_AUDIO.generation;
+  CONTINUOUS_AUDIO.fillPromise=(async()=>{
+    // Nunca intercalamos bytes de dos MP3. La canción de cabecera termina de
+    // añadirse antes de que el productor empiece a anexar la siguiente.
+    const head=CONTINUOUS_AUDIO.headPromise;
+    if(head){
+      try{await head}catch(err){if(err?.name!=='AbortError')throw err}
+      if(g!==CONTINUOUS_AUDIO.generation)return false;
+      if(CONTINUOUS_AUDIO.headPromise===head)CONTINUOUS_AUDIO.headPromise=null;
+    }
+    while(continuousActive()&&g===CONTINUOUS_AUDIO.generation&&!state.repeat&&continuousFutureCount()<CONTINUOUS_AUDIO.fillTarget){
+      const plan=continuousPlanNext();if(!plan)break;
+      const revision=CONTINUOUS_AUDIO.planRevision;
+      try{await continuousAppendPlanned(plan,{planRevision:revision})}catch(err){
+        if(err?.name==='AbortError')break;
+        console.warn('[Music Creations] Segmento omitido en buffer continuo:',plan.id,err);
+        CONTINUOUS_AUDIO.failedIds.add(plan.id);
+        if(plan.origin==='manual'){continuousRemoveFirst(state.manualQueue,plan.id);queueSave()}
+        else continuousRemoveFirst(state.autoUpcoming,plan.id);
+      }
+    }
+    return true;
+  })().finally(()=>{if(g===CONTINUOUS_AUDIO.generation){CONTINUOUS_AUDIO.fillPromise=null;CONTINUOUS_AUDIO.fillTarget=0}});
+  return CONTINUOUS_AUDIO.fillPromise;
+}
+function continuousRefreshCurrentUI(){
+  if(!state.current)return;
+  updateMediaMetadata(state.current);setMediaState(audio.paused?'paused':'playing');updateMediaSessionQueue();
+  if(document.visibilityState==='visible'){
+    refreshTrackUI(false);syncPlayerHistory(state.current.id);
+  }
+}
+function continuousActivate(index,{remember=true,consume=true}={}){
+  const seg=CONTINUOUS_AUDIO.segments[index];if(!seg)return false;
+  const song=queueSong(seg.id);if(!song)return false;
+  const previous=state.current?.id;
+  if(remember&&previous&&previous!==song.id){
+    state.playHistory.push(previous);if(state.playHistory.length>100)state.playHistory.shift();
+  }
+  CONTINUOUS_AUDIO.currentIndex=index;
+  state.current=song;state.index=allSongs().findIndex(s=>s.id===song.id);
+  if(consume)continuousConsumeSegment(seg);
+  state.playing=!audio.paused;
+  continuousRefreshCurrentUI();
+  continuousEnsureAhead(document.visibilityState==='visible'?2:6);
+  return true;
+}
+function continuousSyncFromTime(){
+  if(!continuousActive()||!CONTINUOUS_AUDIO.segments.length)return;
+  const t=audio.currentTime||0,segs=CONTINUOUS_AUDIO.segments;
+  let idx=CONTINUOUS_AUDIO.currentIndex<0?0:CONTINUOUS_AUDIO.currentIndex;
+  const activeSeg=segs[idx];
+  if(state.repeat&&activeSeg&&activeSeg.complete&&t>=activeSeg.end-.04){
+    if(continuousIsBuffered(activeSeg.start+.02))try{audio.currentTime=activeSeg.start+.02}catch{}
+    else if(state.current)continuousStart(state.current,{autoplay:true,seekLocal:0,rebase:true});
+    return;
+  }
+  while(idx+1<segs.length&&t>=segs[idx+1].start-.035)idx++;
+  while(idx>0&&t<segs[idx].start-.035)idx--;
+  if(idx!==CONTINUOUS_AUDIO.currentIndex)continuousActivate(idx,{remember:true,consume:true});
+  const seg=continuousSegment();
+  if(seg){
+    const remain=seg.end-t;
+    if(document.visibilityState!=='visible')continuousEnsureAhead(6);
+    else if(remain<75)continuousEnsureAhead(2);
+  }
+}
+function continuousDesiredNextId(){
+  if(state.manualQueue.length)return state.manualQueue[0];
+  if(!state.autoUpcoming.length)rebuildAutoUpcoming(state.current?.id);
+  return state.autoUpcoming.find(id=>id!==state.current?.id&&queueSong(id))||null;
+}
+async function continuousTruncateFuture(){
+  if(!continuousActive())return false;
+  const g=CONTINUOUS_AUDIO.generation;
+  CONTINUOUS_AUDIO.planRevision++;
+  try{document.dispatchEvent(new Event('mc-planchange'))}catch{}
+  CONTINUOUS_AUDIO.fillTarget=0;
+  const pending=CONTINUOUS_AUDIO.fillPromise;
+  if(pending){try{await pending}catch{}}
+  if(g!==CONTINUOUS_AUDIO.generation||!continuousActive())return false;
+  const sb=CONTINUOUS_AUDIO.sourceBuffer,seg=continuousSegment();
+  if(!sb||!seg)return false;
+  await continuousWaitBufferIdle(sb,g);
+  let bufferedEnd=seg.end;
+  try{if(sb.buffered.length)bufferedEnd=sb.buffered.end(sb.buffered.length-1)}catch{}
+  const cutoff=seg.end+.001;
+  if(bufferedEnd>cutoff+.01){
+    try{
+      sb.remove(cutoff,bufferedEnd+.05);
+      await continuousWaitBufferIdle(sb,g);
+    }catch(err){if(err?.name!=='AbortError')console.warn('[Music Creations] No se pudo recortar la cola futura:',err)}
+  }
+  CONTINUOUS_AUDIO.segments=CONTINUOUS_AUDIO.segments.slice(0,CONTINUOUS_AUDIO.currentIndex+1);
+  continuousEnsureAhead(document.visibilityState==='visible'?2:6);
+  return true;
+}
+function continuousQueueChanged(){
+  if(!continuousActive()||document.visibilityState!=='visible')return;
+  clearTimeout(CONTINUOUS_AUDIO.rebaseTimer);
+  CONTINUOUS_AUDIO.rebaseTimer=setTimeout(()=>{
+    if(!continuousActive())return;
+    // V12: modificar la cola nunca sustituye el src del <audio>. Cancelamos y
+    // recortamos únicamente los segmentos FUTUROS, preservando la sesión que
+    // ya está reproduciendo Android, y volvemos a anexar la prioridad manual.
+    continuousTruncateFuture().catch(err=>console.warn('[Music Creations] Replanificación de cola no disponible:',err));
+  },180);
+}
+async function continuousStart(song,{autoplay=true,seekLocal=0,rebase=false}={}){
+  if(!CONTINUOUS_AUDIO.supported||!song)return false;
+  const oldUrl=CONTINUOUS_AUDIO.objectUrl;
+  const g=CONTINUOUS_AUDIO.generation+1;
+  continuousReleaseSource();
+  CONTINUOUS_AUDIO.generation=g;CONTINUOUS_AUDIO.active=true;CONTINUOUS_AUDIO.starting=true;
+  CONTINUOUS_AUDIO.segments=[];CONTINUOUS_AUDIO.currentIndex=-1;CONTINUOUS_AUDIO.failedIds=new Set();CONTINUOUS_AUDIO.planRevision++;
+  state.switchingTrack=true;if(autoplay)state.userPaused=false;
+  const ms=new MediaSource();CONTINUOUS_AUDIO.mediaSource=ms;
+  const url=URL.createObjectURL(ms);CONTINUOUS_AUDIO.objectUrl=url;
+  audio.autoplay=!!autoplay;audio.preload='auto';
+  audio.src=url;audio.load();
+  updateMediaMetadata(song);
+  // La intención de reproducción se solicita inmediatamente dentro del gesto
+  // que abre la canción. El mismo src blob permanecerá activo en toda la cola.
+  if(autoplay){try{const p=audio.play();if(p?.catch)p.catch(()=>{})}catch{}}
+  try{
+    if(ms.readyState!=='open')await continuousWaitEvent(ms,'sourceopen','sourceclose',g);
+    if(g!==CONTINUOUS_AUDIO.generation)throw new DOMException('Fuente sustituida','AbortError');
+    const sb=ms.addSourceBuffer('audio/mpeg');sb.mode='sequence';CONTINUOUS_AUDIO.sourceBuffer=sb;
+
+    let readyResolve,readyReject;
+    const readyPromise=new Promise((resolve,reject)=>{readyResolve=resolve;readyReject=reject});
+    const headPromise=continuousAppendPlanned({id:song.id,origin:'direct'},{current:true,onPlayable:readyResolve});
+    CONTINUOUS_AUDIO.headPromise=headPromise;
+    headPromise.catch(readyReject);
+
+    // Para un arranque normal no esperamos a descargar la canción completa:
+    // en cuanto MSE dispone de audio reproducible liberamos el camino crítico.
+    let first;
+    if(seekLocal>0){
+      first=await headPromise;
+    }else{
+      first=await readyPromise;
+    }
+    if(g!==CONTINUOUS_AUDIO.generation)throw new DOMException('Fuente sustituida','AbortError');
+    CONTINUOUS_AUDIO.currentIndex=0;
+    if(seekLocal>0){
+      const max=Math.max(0,(first.end-first.start)-.15);
+      try{audio.currentTime=first.start+Math.min(seekLocal,max)}catch{}
+    }
+    if(autoplay&&audio.paused){try{await audio.play()}catch(err){console.warn('[Music Creations] MSE listo pero play() fue rechazado:',err)}}
+    CONTINUOUS_AUDIO.starting=false;state.switchingTrack=false;state.playing=!audio.paused;
+    continuousRefreshCurrentUI();
+
+    // El productor de la cola empieza únicamente después de completar la
+    // cabecera; así jamás se intercalan bytes de canciones diferentes.
+    headPromise.then(()=>{
+      if(g!==CONTINUOUS_AUDIO.generation)return;
+      if(CONTINUOUS_AUDIO.headPromise===headPromise)CONTINUOUS_AUDIO.headPromise=null;
+      continuousEnsureAhead(document.visibilityState==='visible'?2:6);
+    }).catch(err=>{
+      if(err?.name!=='AbortError'&&g===CONTINUOUS_AUDIO.generation){
+        console.warn('[Music Creations] La pista activa no pudo terminar de almacenarse:',err);
+        CONTINUOUS_AUDIO.stalled=true;
+      }
+    });
+    return true;
+  }catch(err){
+    if(err?.name==='AbortError')return false;
+    console.warn('[Music Creations] MSE no pudo iniciarse; se usa motor compatible V11:',err);
+    const local=seekLocal;
+    continuousReleaseSource();state.switchingTrack=true;
+    prepareAudioSource(song);
+    try{if(local>0)audio.currentTime=local}catch{}
+    if(autoplay){audio.autoplay=true;await play()}else{audio.autoplay=false;state.userPaused=true}
+    state.switchingTrack=false;return false;
+  }finally{
+    if(oldUrl&&oldUrl!==CONTINUOUS_AUDIO.objectUrl){setTimeout(()=>{try{URL.revokeObjectURL(oldUrl)}catch{}},0)}
+  }
+}
+function continuousSkipToNext(){
+  if(!continuousActive())return false;
+  const desired=continuousDesiredNextId();if(!desired)return false;
+  const nextIndex=CONTINUOUS_AUDIO.currentIndex+1;
+  const nextSeg=CONTINUOUS_AUDIO.segments[nextIndex];
+  if(nextSeg&&nextSeg.id===desired){
+    continuousActivate(nextIndex,{remember:true,consume:true});
+    state.userPaused=false;audio.autoplay=true;
+    try{audio.currentTime=nextSeg.start+.02}catch{}
+    play();continuousEnsureAhead(document.visibilityState==='visible'?2:6);return true;
+  }
+  let id=null;
+  if(state.manualQueue.length){id=state.manualQueue.shift();queueSave()}
+  else id=takeAutoNext();
+  if(!id)return false;
+  switchTrack(id,{autoplay:true,remember:true});return true;
+}
+function continuousPrevious(){
+  if(!continuousActive())return false;
+  const seg=continuousSegment();if(!seg)return false;
+  if(playerTrackTime()>4){audio.currentTime=seg.start+.01;return true}
+  const prevIndex=CONTINUOUS_AUDIO.currentIndex-1;
+  const prev=CONTINUOUS_AUDIO.segments[prevIndex];
+  if(prev&&continuousIsBuffered(prev.start+.05)){
+    continuousActivate(prevIndex,{remember:false,consume:false});
+    state.userPaused=false;audio.autoplay=true;audio.currentTime=prev.start+.02;play();return true;
+  }
+  return false;
+}
+function continuousSeekBy(delta){playerTrackSeek(playerTrackTime()+(Number(delta)||0));updateMediaSessionQueue()}
+function continuousSeekTo(details){
+  const d=playerTrackDuration();if(!d)return;
+  const pos=Math.max(0,Math.min(Number(details?.seekTime)||0,d));
+  playerTrackSeek(pos);updateMediaSessionQueue();
+}
+
 // Navegación interna de la plataforma.
 // El historial se utiliza como una capa de navegación de la SPA: abrir el
 // reproductor crea una entrada propia y el botón Atrás del móvil vuelve al
@@ -1597,21 +2051,21 @@ function addToQueue(id,afterCurrent=false){
   // autoplay. Evitamos duplicados accidentales desde la interfaz.
   state.manualQueue=state.manualQueue.filter(x=>x!==id);
   if(afterCurrent)state.manualQueue.unshift(id);else state.manualQueue.push(id);
-  queueSave();renderQueue();fillQueueSelect();updateMediaSessionQueue();
+  queueSave();renderQueue();fillQueueSelect();updateMediaSessionQueue();continuousQueueChanged();
 }
 function removeFromQueue(id){
   state.manualQueue=state.manualQueue.filter(x=>x!==id);
-  queueSave();renderQueue();fillQueueSelect();updateMediaSessionQueue();
+  queueSave();renderQueue();fillQueueSelect();updateMediaSessionQueue();continuousQueueChanged();
 }
 function moveQueue(id,dir){
   const i=state.manualQueue.indexOf(id),j=i+dir;
   if(i<0||j<0||j>=state.manualQueue.length)return;
   [state.manualQueue[i],state.manualQueue[j]]=[state.manualQueue[j],state.manualQueue[i]];
-  queueSave();renderQueue();updateMediaSessionQueue();
+  queueSave();renderQueue();updateMediaSessionQueue();continuousQueueChanged();
 }
 function clearQueue(){
   state.manualQueue=[];
-  queueSave();renderQueue();fillQueueSelect();updateMediaSessionQueue();
+  queueSave();renderQueue();fillQueueSelect();updateMediaSessionQueue();continuousQueueChanged();
 }
 function playQueuedNow(id){
   if(!queueSong(id))return;
@@ -1659,8 +2113,11 @@ function artworkSrc(song){
 function updateMediaSessionQueue(){
   if(!('mediaSession' in navigator))return;
   try{
-    if('setPositionState' in navigator.mediaSession && Number.isFinite(audio.duration) && audio.duration>0){
-      navigator.mediaSession.setPositionState({duration:audio.duration,playbackRate:audio.playbackRate||1,position:Math.min(audio.currentTime,audio.duration)});
+    if('setPositionState' in navigator.mediaSession){
+      const duration=playerTrackDuration(),position=Math.min(playerTrackTime(),duration||0);
+      if(Number.isFinite(duration)&&duration>0&&Number.isFinite(position)){
+        navigator.mediaSession.setPositionState({duration,playbackRate:audio.playbackRate||1,position:Math.max(0,position)});
+      }
     }
   }catch{}
 }
@@ -1864,15 +2321,21 @@ function switchTrack(id,{autoplay=true,remember=true}={}){
   state.switchingTrack=true;
   if(autoplay)state.userPaused=false;
 
-  // V11: el camino crítico es AUDIO PRIMERO. Ninguna actualización visual,
-  // de historial o de cola puede impedir que la pista siguiente arranque.
+  // V12: en Chrome/Android usamos MediaSource audio/mpeg para que la fuente
+  // del <audio> NO termine ni cambie entre canciones automáticas. Esta es la
+  // diferencia esencial respecto a V11 y mantiene vivo el foco multimedia.
+  if(CONTINUOUS_AUDIO.supported){
+    const startPromise=continuousStart(state.current,{autoplay,seekLocal:0});
+    refreshTrackUI(true);syncPlayerHistory(id);
+    Promise.resolve(startPromise).finally(()=>{if(!CONTINUOUS_AUDIO.starting)state.switchingTrack=false});
+    return true;
+  }
+
+  // Fallback V11 para navegadores sin MSE audio/mpeg.
   const sourceChanged=prepareAudioSource(state.current);
   updateMediaMetadata(state.current);
   const startPromise=autoplay?play():Promise.resolve(true);
-
-  // Lo no esencial se hace después de haber solicitado la reproducción.
-  refreshTrackUI(sourceChanged);
-  syncPlayerHistory(id);
+  refreshTrackUI(sourceChanged);syncPlayerHistory(id);
   Promise.resolve(startPromise).finally(()=>{state.switchingTrack=false});
   return true;
 }
@@ -1902,15 +2365,17 @@ function updateModal(){
   // V11: updateModal es exclusivamente visual. La fuente de audio se prepara
   // antes, dentro de switchTrack(), para que una excepción de UI nunca pueda
   // dejar la siguiente canción sin reproducir.
-  const target=REPO_BASE+s.audio;
-  const sourceChanged=audio.getAttribute('src')!==target;
-  if(sourceChanged){
-    // Solo puede ocurrir al abrir una vista sin haber pasado por switchTrack.
-    prepareAudioSource(s);
+  // Con el motor continuo V12, audio.src es un único blob MediaSource y NO
+  // debe sustituirse por la URL del MP3 al redibujar la interfaz.
+  if(!CONTINUOUS_AUDIO.active){
+    const target=REPO_BASE+s.audio;
+    const sourceChanged=audio.getAttribute('src')!==target;
+    if(sourceChanged)prepareAudioSource(s);
   }
-  document.getElementById('cur').textContent=fmt(audio.currentTime);
-  document.getElementById('dur').textContent=fmt(audio.duration);
-  const progress=audio.duration?(audio.currentTime/audio.duration)*100:0;
+  const localTime=playerTrackTime(),trackDuration=playerTrackDuration();
+  document.getElementById('cur').textContent=fmt(localTime);
+  document.getElementById('dur').textContent=fmt(trackDuration);
+  const progress=trackDuration?(localTime/trackDuration)*100:0;
   document.getElementById('fill').style.width=progress+'%';
   document.getElementById('miniFill').style.width=progress+'%';
   updatePlayerLike();
@@ -1961,23 +2426,20 @@ function refreshSystemMediaSession(){
 
 function play(){
   if(!state.current)return Promise.resolve(false);
-  state.userPaused=false;
+  state.userPaused=false;audio.autoplay=true;
   let result;
   try{result=audio.play()}catch(err){result=Promise.reject(err)}
   return Promise.resolve(result).then(()=>{
-    state.playing=true;updatePlayIcons();setMediaState('playing');return true;
+    state.playing=true;updatePlayIcons();setMediaState('playing');refreshSystemMediaSession();return true;
   }).catch(err=>{
-    // Un AbortError puede aparecer si el navegador estaba terminando la carga
-    // anterior. Reintentamos una sola vez cuando el nuevo MP3 ya está listo.
-    if(err?.name==='AbortError'&&!state.userPaused){
+    if(err?.name==='AbortError'&&!state.userPaused&&!CONTINUOUS_AUDIO.active){
       return new Promise(resolve=>{
         let done=false;
         const finish=ok=>{if(done)return;done=true;clearTimeout(timer);audio.removeEventListener('canplay',retry);audio.removeEventListener('error',fail);resolve(ok)};
         const retry=()=>{Promise.resolve(audio.play()).then(()=>{state.playing=true;updatePlayIcons();setMediaState('playing');finish(true)}).catch(()=>finish(false))};
         const fail=()=>finish(false);
         const timer=setTimeout(()=>finish(false),2500);
-        audio.addEventListener('canplay',retry,{once:true});
-        audio.addEventListener('error',fail,{once:true});
+        audio.addEventListener('canplay',retry,{once:true});audio.addEventListener('error',fail,{once:true});
         if(audio.readyState>=2)retry();
       });
     }
@@ -1985,7 +2447,7 @@ function play(){
     state.playing=!audio.paused;updatePlayIcons();setMediaState(audio.paused?'paused':'playing');return false;
   });
 }
-function pause(){audio.pause();state.userPaused=true;state.playing=false;updatePlayIcons();setMediaState('paused')}
+function pause(){audio.autoplay=false;audio.pause();state.userPaused=true;state.playing=false;updatePlayIcons();setMediaState('paused')}
 function togglePlay(){audio.paused?play():pause()}
 function updatePlayIcons(){
   const icon=state.playing&&!audio.paused?'Ⅱ':'▶';
@@ -1998,6 +2460,7 @@ function closePlayer(){
 }
 function nextTrack(reason='user'){
   if(!state.current)return;
+  if(continuousActive()&&continuousSkipToNext())return;
   let id=null;
   if(state.manualQueue.length){
     id=state.manualQueue.shift();
@@ -2009,12 +2472,12 @@ function nextTrack(reason='user'){
 }
 function previousTrack(){
   if(!state.current)return;
-  // Comportamiento habitual de reproductores: si han pasado unos segundos,
-  // anterior reinicia la pista; si no, vuelve a la pista reproducida antes.
-  if(audio.currentTime>4){audio.currentTime=0;return}
+  if(continuousActive()){
+    if(continuousPrevious())return;
+  }else if(audio.currentTime>4){audio.currentTime=0;return}
   const id=state.playHistory.pop();
   if(id&&queueSong(id))switchTrack(id,{autoplay:true,remember:false});
-  else{audio.currentTime=0;play()}
+  else{playerTrackSeek(0);play()}
 }
 function go(delta){if(delta<0)previousTrack();else nextTrack('user')}
 
@@ -2075,75 +2538,105 @@ function initNav(){
 }
 
 function initAudio(){
-  audio.volume=.9;
-  audio.preload='auto';
-  audio.addEventListener('loadedmetadata',()=>{document.getElementById('dur').textContent=fmt(audio.duration);updateMediaSessionQueue()});
-  audio.addEventListener('timeupdate',()=>{
-    const p=audio.duration?(audio.currentTime/audio.duration)*100:0;
+  audio.volume=.9;audio.preload='auto';
+  const syncProgress=()=>{
+    if(continuousActive())continuousSyncFromTime();
+    const duration=playerTrackDuration(),current=playerTrackTime();
+    const p=duration?(current/duration)*100:0;
     document.getElementById('fill').style.width=p+'%';document.getElementById('miniFill').style.width=p+'%';
-    document.getElementById('cur').textContent=fmt(audio.currentTime); updateMediaSessionQueue();
-  });
+    document.getElementById('cur').textContent=fmt(current);document.getElementById('dur').textContent=fmt(duration);
+    updateMediaSessionQueue();
+  };
+  audio.addEventListener('loadedmetadata',syncProgress);
+  audio.addEventListener('durationchange',syncProgress);
+  audio.addEventListener('timeupdate',syncProgress);
   audio.addEventListener('play',()=>{state.playing=true;state.userPaused=false;updatePlayIcons();setMediaState('playing')});
-  audio.addEventListener('playing',()=>{state.playing=true;state.userPaused=false;updatePlayIcons();refreshSystemMediaSession()});
+  audio.addEventListener('playing',()=>{
+    CONTINUOUS_AUDIO.stalled=false;state.playing=true;state.userPaused=false;updatePlayIcons();refreshSystemMediaSession();
+    if(continuousActive())continuousEnsureAhead(document.visibilityState==='visible'?2:6);
+  });
   audio.addEventListener('pause',()=>{
-    // Un pause transitorio durante un cambio de src no debe interpretarse
-    // como fin de sesión. El siguiente play actualizará inmediatamente el UI.
+    // Un pause transitorio al inicializar/rebasar una fuente no es una orden
+    // del usuario. La bandera userPaused solo se activa desde pause().
     if(!state.switchingTrack){state.playing=false;updatePlayIcons();setMediaState('paused')}
   });
+  const recoverBuffer=()=>{
+    if(continuousActive()&&!state.userPaused){
+      CONTINUOUS_AUDIO.stalled=true;
+      continuousEnsureAhead(6).then(()=>{
+        if(continuousActive()&&CONTINUOUS_AUDIO.stalled&&!state.userPaused&&audio.paused&&audio.readyState>=2)play();
+      });
+    }
+  };
+  audio.addEventListener('waiting',recoverBuffer);
+  audio.addEventListener('stalled',recoverBuffer);
   audio.addEventListener('canplay',()=>{
-    // Recuperación prudente: si Android terminó de cargar una pista encadenada
-    // y quedó pausada sin petición del usuario, reanudamos esa misma pista.
-    if(state.current&&!state.userPaused&&state.switchingTrack&&audio.paused)play();
+    if(continuousActive()){
+      if(CONTINUOUS_AUDIO.stalled&&!state.userPaused&&audio.paused)play();
+    }else if(state.current&&!state.userPaused&&state.switchingTrack&&audio.paused)play();
   });
   audio.addEventListener('ended',()=>{
+    if(continuousActive()){
+      // En MSE no se llama endOfStream: si llegamos aquí es un underrun o
+      // cierre excepcional. Intentamos rellenar antes de cambiar de fuente.
+      CONTINUOUS_AUDIO.stalled=true;
+      continuousEnsureAhead(8).then(()=>{if(continuousActive()&&!state.userPaused)play()});
+      return;
+    }
     if(state.repeat){audio.currentTime=0;play()}else nextTrack('ended');
   });
   audio.addEventListener('error',()=>{
+    if(state.switchingTrack)return;
     state.playing=false;updatePlayIcons();
-    // Un MP3 individual no debe detener una sesión completa. Si la URL falla,
-    // saltamos al siguiente elemento tras una breve pausa para evitar bucles
-    // agresivos cuando no hay conexión.
-    if(state.current&&!state.userPaused){setTimeout(()=>nextTrack('error'),1200)}
+    if(continuousActive()&&state.current){
+      // Fallback de emergencia: un error del pipeline MSE no debe dejar al
+      // usuario sin audio. Retomamos la pista actual con el motor compatible.
+      const song=state.current,local=playerTrackTime(),shouldPlay=!state.userPaused;
+      continuousReleaseSource();state.switchingTrack=true;prepareAudioSource(song);
+      try{if(local>0)audio.currentTime=local}catch{}
+      if(shouldPlay)play();state.switchingTrack=false;return;
+    }
+    if(state.current&&!state.userPaused)setTimeout(()=>nextTrack('error'),1200);
   });
   document.getElementById('progress').addEventListener('click',e=>{
-    if(!audio.duration)return;const r=e.currentTarget.getBoundingClientRect();audio.currentTime=((e.clientX-r.left)/r.width)*audio.duration;
+    const duration=playerTrackDuration();if(!duration)return;
+    const r=e.currentTarget.getBoundingClientRect();playerTrackSeek(((e.clientX-r.left)/r.width)*duration);updateMediaSessionQueue();
   });
   document.getElementById('volume').addEventListener('input',e=>{audio.volume=Number(e.target.value);document.getElementById('miniVolume').value=e.target.value});
   document.getElementById('miniVolume').addEventListener('input',e=>{audio.volume=Number(e.target.value);document.getElementById('volume').value=e.target.value});
 }
-
 function initMediaSession(){
   if('audioSession' in navigator){try{navigator.audioSession.type='playback'}catch{}}
   if(!('mediaSession' in navigator))return;
   const actions={
     play:()=>play().then(()=>refreshSystemMediaSession()),pause:()=>pause(),stop:()=>pause(),
     previoustrack:()=>previousTrack(),nexttrack:()=>nextTrack('media-session'),
-    seekbackward:(details)=>{audio.currentTime=Math.max(0,audio.currentTime-(details?.seekOffset||10))},
-    seekforward:(details)=>{audio.currentTime=Math.min(audio.duration||0,audio.currentTime+(details?.seekOffset||10))},
-    seekto:(details)=>{if(details.fastSeek&&'fastSeek' in audio)audio.fastSeek(details.seekTime);else audio.currentTime=details.seekTime}
+    seekbackward:(details)=>continuousSeekBy(-(details?.seekOffset||10)),
+    seekforward:(details)=>continuousSeekBy(details?.seekOffset||10),
+    seekto:(details)=>continuousSeekTo(details)
   };
   Object.entries(actions).forEach(([name,fn])=>{try{navigator.mediaSession.setActionHandler(name,fn)}catch{}});
 }
-
 function keepPlaybackOnBackground(){
-  // No pausamos nunca por visibilitychange/pagehide. La Media Session se
-  // reafirma al minimizar, bloquear y volver a primer plano.
+  // V12: al ocultarse la PWA no cambiamos de fuente. El mismo MediaSource
+  // sigue alimentando el mismo <audio> y el productor mantiene un buffer
+  // rodante dentro de la cuota disponible de Chromium.
+  // Chrome documenta que las páginas que están reproduciendo audio reciben
+  // un tratamiento especial frente al freeze/discard; evitamos el hueco de
+  // audio entre MP3 que en V11 hacía perder ese estado.
   document.addEventListener('visibilitychange',()=>{
     refreshSystemMediaSession();
-    if(document.visibilityState==='visible'&&state.current){
-      refreshTrackUI(false);
+    if(document.visibilityState==='visible'){
+      if(state.current)refreshTrackUI(false);
+      if(continuousActive())continuousEnsureAhead(2);
+    }else if(continuousActive()){
+      continuousEnsureAhead(6);
     }
   });
-  window.addEventListener('pageshow',()=>{if(state.current){refreshSystemMediaSession();refreshTrackUI(false)}});
-
-  // Red de seguridad para transiciones perdidas por suspensión parcial del
-  // navegador. Nunca actúa si el usuario ha pulsado Pausa.
-  setInterval(()=>{
-    if(!state.current||state.userPaused||state.switchingTrack)return;
-    if(audio.ended)nextTrack('watchdog-ended');
-  },5000);
+  document.addEventListener('freeze',()=>{if(continuousActive())continuousEnsureAhead(8)});
+  document.addEventListener('resume',()=>{if(state.current){refreshSystemMediaSession();if(continuousActive())continuousEnsureAhead(6)}});
+  window.addEventListener('pageshow',()=>{if(state.current){refreshSystemMediaSession();refreshTrackUI(false);if(continuousActive())continuousEnsureAhead(2)}});
 }
-
 async function init(){
   // El catálogo externo debe cargarse ANTES de renderizar la biblioteca.
   // Así las canciones no aparecen momentáneamente como 0 y, sobre todo,
@@ -2170,7 +2663,7 @@ async function init(){
   document.getElementById('prev').addEventListener('click',()=>go(-1));document.getElementById('next').addEventListener('click',()=>go(1));
   document.getElementById('miniPrev').addEventListener('click',()=>go(-1));document.getElementById('miniNext').addEventListener('click',()=>go(1));
   document.getElementById('shuffle').style.color=state.shuffle?'var(--gold)':'';document.getElementById('shuffle').addEventListener('click',e=>{state.shuffle=!state.shuffle;rebuildAutoUpcoming();e.currentTarget.style.color=state.shuffle?'var(--gold)':'';renderQueue()});
-  document.getElementById('repeat').addEventListener('click',e=>{state.repeat=!state.repeat;e.currentTarget.style.color=state.repeat?'var(--gold)':''});
+  document.getElementById('repeat').addEventListener('click',e=>{state.repeat=!state.repeat;e.currentTarget.style.color=state.repeat?'var(--gold)':'';if(continuousActive()&&!state.repeat)continuousEnsureAhead(document.visibilityState==='visible'?2:6)});
   document.getElementById('favoritesToggle').addEventListener('click',toggleFavoritesPanel);
   document.getElementById('favoritesNav').addEventListener('click',()=>setFavoritesPanel(true));
   document.getElementById('playerLike').addEventListener('click',e=>{if(state.current)toggleLike(state.current.id,e)});
