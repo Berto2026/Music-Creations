@@ -1197,7 +1197,7 @@ img, video, canvas, svg { max-width:100%; }
   </div>
 </div>
 
-<audio id="audio" preload="auto" playsinline></audio>
+<audio id="audio" preload="auto" playsinline data-player-version="V10"></audio>
 
 <script>
 /* ============================================================
@@ -1903,6 +1903,21 @@ function updateModal(){
     }catch{}
   }
 }
+
+function updatePlayerLike(){
+  if(!state.current)return;
+  const meta=document.getElementById('modalMeta');
+  if(meta)meta.style.opacity='1';
+  const btn=document.getElementById('playerLike');
+  if(btn){
+    const on=liked(state.current.id);
+    btn.textContent=on?'♥':'♡';
+    btn.classList.toggle('liked',on);
+    btn.title=on?'Quitar de favoritos':'Añadir a favoritos';
+    btn.setAttribute('aria-label',btn.title);
+  }
+}
+
 function play(){
   if(!state.current)return Promise.resolve(false);
   state.userPaused=false;audio.autoplay=true;
