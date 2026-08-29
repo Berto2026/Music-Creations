@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "artist": "Berto Antúnez",
   "songs": [
     {
@@ -928,6 +928,66 @@
       "lyrics": "",
       "addedAt": "2026-08-29T03:51:00+02:00",
       "style": "Rap Rock"
+    },
+    {
+      "id": "sg49",
+      "title": "NO DESLICES EL CORAZÓN",
+      "genre": "Pop",
+      "style": "Pop Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "49-no-deslices-el-corazon.mp3",
+      "cover": "covers/49-no-deslices-el-corazon.jpeg",
+      "tags": [
+        "Pop Rock",
+        "Pop",
+        "Melódico",
+        "Acústico",
+        "Romántico"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-29T10:55:00+02:00"
+    },
+    {
+      "id": "sg50",
+      "title": "LA VIDA EN MODO TURBO",
+      "genre": "Rock",
+      "style": "Ska Punk",
+      "language": "Spanish",
+      "album": "",
+      "audio": "50-la-vida-en-modo-turbo.mp3",
+      "cover": "covers/50-la-vida-en-modo-turbo.jpeg",
+      "tags": [
+        "Ska Punk",
+        "Rock",
+        "Ska",
+        "Metales",
+        "Enérgico"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-29T10:55:00+02:00"
+    },
+    {
+      "id": "sg51",
+      "title": "LA TIERRA NOS ESTÁ HABLANDO",
+      "genre": "Rock",
+      "style": "Rap Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "51-la-tierra-nos-esta-hablando.mp3",
+      "cover": "covers/51-la-tierra-nos-esta-hablando.jpeg",
+      "tags": [
+        "Rap Rock",
+        "Rock",
+        "Crítica social",
+        "Medio ambiente",
+        "Rítmico"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-08-29T10:55:00+02:00"
     }
   ]
 }
