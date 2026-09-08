@@ -1,5 +1,5 @@
 {
-  "version": 10,
+  "version": 11,
   "artist": "Berto Antúnez",
   "songs": [
     {
@@ -1008,6 +1008,66 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-29T11:39:00+02:00"
+    },
+    {
+      "id": "sg53",
+      "title": "QUE SE PARE EL RELOJ",
+      "genre": "Rock",
+      "style": "Hard Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "53-que-se-pare-el-reloj.mp3",
+      "cover": "covers/53-que-se-pare-el-reloj.jpeg",
+      "tags": [
+        "Hard Rock",
+        "Rock",
+        "Potente",
+        "Épico",
+        "Crítica social"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-09-08T21:23:00+02:00"
+    },
+    {
+      "id": "sg54",
+      "title": "CRONOFAGIA (LA REBELIÓN DEL AUTÓMATA)",
+      "genre": "Rock",
+      "style": "Pop Punk",
+      "language": "Spanish",
+      "album": "",
+      "audio": "54-cronofagia-la-rebelion-del-automata.mp3",
+      "cover": "covers/54-cronofagia-la-rebelion-del-automata.jpeg",
+      "tags": [
+        "Pop Punk",
+        "Rock",
+        "Antémico",
+        "Enérgico",
+        "Crítica social"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-09-08T21:23:00+02:00"
+    },
+    {
+      "id": "sg55",
+      "title": "ÚLTIMA VEZ EN LÍNEA",
+      "genre": "Pop",
+      "style": "Pop Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "55-ultima-vez-en-linea.mp3",
+      "cover": "covers/55-ultima-vez-en-linea.jpeg",
+      "tags": [
+        "Pop Rock",
+        "Pop",
+        "Melódico",
+        "Nocturno",
+        "Emocional"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-09-08T21:23:00+02:00"
     }
   ]
 }
