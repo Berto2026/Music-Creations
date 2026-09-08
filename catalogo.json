@@ -1,5 +1,5 @@
 {
-  "version": 11,
+  "version": 12,
   "artist": "Berto Antúnez",
   "songs": [
     {
@@ -1068,6 +1068,48 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-09-08T21:23:00+02:00"
+    },
+    {
+      "id": "sg56",
+      "title": "DONDE APRENDÍ A SER",
+      "genre": "Electronic",
+      "style": "Flamenco House",
+      "language": "Spanish",
+      "album": "",
+      "audio": "56-donde-aprendi-a-ser.mp3",
+      "cover": "covers/56-donde-aprendi-a-ser.jpeg",
+      "tags": [
+        "Flamenco House",
+        "Electronic",
+        "Flamenco",
+        "House",
+        "Guitarra española",
+        "Melódico"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-09-09T00:13:00+02:00"
+    },
+    {
+      "id": "sg57",
+      "title": "EL FUEGO BAJO EL ASFALTO",
+      "genre": "Electronic",
+      "style": "Flamenco Tech House",
+      "language": "Spanish",
+      "album": "",
+      "audio": "57-el-fuego-bajo-el-asfalto.mp3",
+      "cover": "covers/57-el-fuego-bajo-el-asfalto.jpeg",
+      "tags": [
+        "Flamenco Tech House",
+        "Electronic",
+        "Flamenco",
+        "Techno",
+        "House",
+        "Guitarra española"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-09-09T00:13:00+02:00"
     }
   ]
 }
