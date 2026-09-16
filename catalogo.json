@@ -1,5 +1,5 @@
 {
-  "version": 12,
+  "version": 13,
   "artist": "Berto Antúnez",
   "songs": [
     {
@@ -1110,6 +1110,69 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-09-09T00:13:00+02:00"
+    },
+    {
+      "id": "sg58",
+      "title": "DONDE EL VERANO SE QUEDA",
+      "genre": "Rock",
+      "style": "Melodic Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "58-donde-el-verano-se-queda.mp3",
+      "cover": "covers/58-donde-el-verano-se-queda.jpeg",
+      "tags": [
+        "Melodic Rock",
+        "Rock",
+        "Melódico",
+        "Nostálgico",
+        "Guitarra",
+        "Creciente"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-09-16T23:27:00+02:00"
+    },
+    {
+      "id": "sg59",
+      "title": "DONDE TERMINA EL MIEDO",
+      "genre": "Rock",
+      "style": "Hard Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "59-donde-termina-el-miedo.mp3",
+      "cover": "covers/59-donde-termina-el-miedo.jpeg",
+      "tags": [
+        "Hard Rock",
+        "Rock",
+        "Riff eléctrico",
+        "Enérgico",
+        "Antémico",
+        "Potente"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-09-16T23:27:00+02:00"
+    },
+    {
+      "id": "sg60",
+      "title": "LOCOS, PERO LÚCIDOS",
+      "genre": "Latin",
+      "style": "Latin Pop",
+      "language": "Spanish",
+      "album": "",
+      "audio": "60-locos-pero-lucidos.mp3",
+      "cover": "covers/60-locos-pero-lucidos.jpeg",
+      "tags": [
+        "Latin Pop",
+        "Latin",
+        "Guitarra latina",
+        "Bailable",
+        "Rítmico",
+        "Celebración"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-09-16T23:27:00+02:00"
     }
   ]
 }
