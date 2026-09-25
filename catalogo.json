@@ -1,5 +1,5 @@
 {
-  "version": 14,
+  "version": 15,
   "artist": "Berto Antúnez",
   "songs": [
     {
@@ -1194,6 +1194,48 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-09-17T00:31:00+02:00"
+    },
+    {
+      "id": "sg62",
+      "title": "LA DISTANCIA ENTRE DOS PUNTOS",
+      "genre": "Pop",
+      "style": "Alternative Pop",
+      "language": "Spanish",
+      "album": "",
+      "audio": "62-la-distancia-entre-dos-puntos.mp3",
+      "cover": "covers/62-la-distancia-entre-dos-puntos.jpeg",
+      "tags": [
+        "Alternative Pop",
+        "Pop",
+        "Indie Pop",
+        "Atmosférico",
+        "Melódico",
+        "Emocional"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-09-25T18:53:00+02:00"
+    },
+    {
+      "id": "sg63",
+      "title": "LA INERCIA DEL GRIS",
+      "genre": "Pop",
+      "style": "Indie Pop",
+      "language": "Spanish",
+      "album": "",
+      "audio": "63-la-inercia-del-gris.mp3",
+      "cover": "covers/63-la-inercia-del-gris.jpeg",
+      "tags": [
+        "Indie Pop",
+        "Pop",
+        "Alternative Pop",
+        "Pop Rock",
+        "Melódico",
+        "Atmosférico"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-09-25T18:53:00+02:00"
     }
   ]
 }
