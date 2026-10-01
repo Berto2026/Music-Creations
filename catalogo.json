@@ -1,5 +1,5 @@
 {
-  "version": 15,
+  "version": 16,
   "artist": "Berto Antúnez",
   "songs": [
     {
@@ -324,10 +324,10 @@
       "id": "sg17",
       "title": "HOY NOS DEBEMOS EL DÍA",
       "genre": "Pop",
+      "style": "Pop Rock",
       "language": "Spanish",
       "album": "",
       "audio": "17-hoy-nos-debemos-el-dia.mp3",
-      "coverKey": "SINGLE_COVER_SG17",
       "tags": [
         "Pop Rock",
         "Pop",
@@ -337,12 +337,13 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-25T00:00:00+02:00",
-      "style": "Pop Rock"
+      "coverKey": "SINGLE_COVER_SG17"
     },
     {
       "id": "sg18",
       "title": "EL SOL DEL VALLE",
       "genre": "Pop",
+      "style": "Pop Rock",
       "language": "Spanish",
       "album": "",
       "audio": "18-el-sol-del-valle.mp3",
@@ -355,17 +356,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-25T00:00:00+02:00",
-      "cover": "covers/18-el-sol-del-valle.jpeg",
-      "style": "Pop Rock"
+      "cover": "covers/18-el-sol-del-valle.jpeg"
     },
     {
       "id": "sg19",
       "title": "REWRITING THE NIGHT SKY",
       "genre": "Rock",
+      "style": "Post-Hardcore",
       "language": "English",
       "album": "",
       "audio": "19-rewriting-the-night-sky.mp3",
-      "cover": "covers/19-rewriting-the-night-sky.jpeg",
       "tags": [
         "Post-Hardcore",
         "Rock",
@@ -375,16 +375,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Post-Hardcore"
+      "cover": "covers/19-rewriting-the-night-sky.jpeg"
     },
     {
       "id": "sg20",
       "title": "ONEIRIC LANDSCAPES",
       "genre": "Rock",
+      "style": "Atmospheric Rock",
       "language": "English",
       "album": "",
       "audio": "20-oneiric-landscapes.mp3",
-      "cover": "covers/20-oneiric-landscapes.jpeg",
       "tags": [
         "Atmospheric Rock",
         "Rock",
@@ -394,16 +394,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Atmospheric Rock"
+      "cover": "covers/20-oneiric-landscapes.jpeg"
     },
     {
       "id": "sg21",
       "title": "HYPERSONIC GODS",
       "genre": "Metal",
+      "style": "Metalcore",
       "language": "English",
       "album": "",
       "audio": "21-hypersonic-gods.mp3",
-      "cover": "covers/21-hypersonic-gods.jpeg",
       "tags": [
         "Metalcore",
         "Metal",
@@ -413,16 +413,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Metalcore"
+      "cover": "covers/21-hypersonic-gods.jpeg"
     },
     {
       "id": "sg22",
       "title": "SILICONE SOULS",
       "genre": "Rock",
+      "style": "Industrial Rock",
       "language": "English",
       "album": "",
       "audio": "22-silicone-souls.mp3",
-      "cover": "covers/22-silicone-souls.jpeg",
       "tags": [
         "Industrial Rock",
         "Rock",
@@ -432,16 +432,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Industrial Rock"
+      "cover": "covers/22-silicone-souls.jpeg"
     },
     {
       "id": "sg23",
       "title": "ORDINARY GIANTS",
       "genre": "Metal",
+      "style": "Alternative Metal",
       "language": "English",
       "album": "",
       "audio": "23-ordinary-giants.mp3",
-      "cover": "covers/23-ordinary-giants.jpeg",
       "tags": [
         "Alternative Metal",
         "Metal",
@@ -451,16 +451,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Alternative Metal"
+      "cover": "covers/23-ordinary-giants.jpeg"
     },
     {
       "id": "sg24",
       "title": "THE PRICE OF TOMORROW",
       "genre": "Metal",
+      "style": "Metalcore",
       "language": "English",
       "album": "",
       "audio": "24-the-price-of-tomorrow.mp3",
-      "cover": "covers/24-the-price-of-tomorrow.jpeg",
       "tags": [
         "Metalcore",
         "Metal",
@@ -470,16 +470,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Metalcore"
+      "cover": "covers/24-the-price-of-tomorrow.jpeg"
     },
     {
       "id": "sg25",
       "title": "SANCTUARY ON A LOOP",
       "genre": "Rock",
+      "style": "Alternative Rock",
       "language": "English",
       "album": "",
       "audio": "25-sanctuary-on-a-loop.mp3",
-      "cover": "covers/25-sanctuary-on-a-loop.jpeg",
       "tags": [
         "Alternative Rock",
         "Rock",
@@ -489,16 +489,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Alternative Rock"
+      "cover": "covers/25-sanctuary-on-a-loop.jpeg"
     },
     {
       "id": "sg26",
       "title": "THE GREEN DELIVERANCE",
       "genre": "Rock",
+      "style": "Atmospheric Rock",
       "language": "English",
       "album": "",
       "audio": "26-the-green-deliverance.mp3",
-      "cover": "covers/26-the-green-deliverance.jpeg",
       "tags": [
         "Atmospheric Rock",
         "Rock",
@@ -508,16 +508,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Atmospheric Rock"
+      "cover": "covers/26-the-green-deliverance.jpeg"
     },
     {
       "id": "sg27",
       "title": "REFLECTIONS OF EDUCATION",
       "genre": "Rock",
+      "style": "Alternative Rock",
       "language": "English",
       "album": "",
       "audio": "27-reflections-of-education.mp3",
-      "cover": "covers/27-reflections-of-education.jpeg",
       "tags": [
         "Alternative Rock",
         "Rock",
@@ -527,16 +527,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Alternative Rock"
+      "cover": "covers/27-reflections-of-education.jpeg"
     },
     {
       "id": "sg28",
       "title": "MIST & NEON",
       "genre": "Rock",
+      "style": "Synth Rock",
       "language": "English",
       "album": "",
       "audio": "28-mist-and-neon.mp3",
-      "cover": "covers/28-mist-and-neon.jpeg",
       "tags": [
         "Synth Rock",
         "Rock",
@@ -546,16 +546,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Synth Rock"
+      "cover": "covers/28-mist-and-neon.jpeg"
     },
     {
       "id": "sg29",
       "title": "COIN FLIP DESTINY",
       "genre": "Metal",
+      "style": "Alternative Metal",
       "language": "English",
       "album": "",
       "audio": "29-coin-flip-destiny.mp3",
-      "cover": "covers/29-coin-flip-destiny.jpeg",
       "tags": [
         "Alternative Metal",
         "Metal",
@@ -565,16 +565,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Alternative Metal"
+      "cover": "covers/29-coin-flip-destiny.jpeg"
     },
     {
       "id": "sg30",
       "title": "RAINBOW LIES",
       "genre": "Rock",
+      "style": "Pop Rock",
       "language": "English",
       "album": "",
       "audio": "30-rainbow-lies.mp3",
-      "cover": "covers/30-rainbow-lies.jpeg",
       "tags": [
         "Pop Rock",
         "Rock",
@@ -584,16 +584,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Pop Rock"
+      "cover": "covers/30-rainbow-lies.jpeg"
     },
     {
       "id": "sg31",
       "title": "THE WIND OF REBIRTH",
       "genre": "Rock",
+      "style": "Symphonic Rock",
       "language": "English",
       "album": "",
       "audio": "31-the-wind-of-rebirth.mp3",
-      "cover": "covers/31-the-wind-of-rebirth.jpeg",
       "tags": [
         "Symphonic Rock",
         "Rock",
@@ -603,16 +603,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Symphonic Rock"
+      "cover": "covers/31-the-wind-of-rebirth.jpeg"
     },
     {
       "id": "sg32",
       "title": "MECHANICAL APATHY",
       "genre": "Metal",
+      "style": "Industrial Metal",
       "language": "English",
       "album": "",
       "audio": "32-mechanical-apathy.mp3",
-      "cover": "covers/32-mechanical-apathy.jpeg",
       "tags": [
         "Industrial Metal",
         "Metal",
@@ -622,16 +622,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Industrial Metal"
+      "cover": "covers/32-mechanical-apathy.jpeg"
     },
     {
       "id": "sg33",
       "title": "THE FAITHFUL GATEWAY",
       "genre": "Metal",
+      "style": "Progressive Metal",
       "language": "English",
       "album": "",
       "audio": "33-the-faithful-gateway.mp3",
-      "cover": "covers/33-the-faithful-gateway.jpeg",
       "tags": [
         "Progressive Metal",
         "Metal",
@@ -641,16 +641,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Progressive Metal"
+      "cover": "covers/33-the-faithful-gateway.jpeg"
     },
     {
       "id": "sg34",
       "title": "CATHEDRALS OF STARDUST",
       "genre": "Rock",
+      "style": "Progressive Rock",
       "language": "English",
       "album": "",
       "audio": "34-cathedrals-of-stardust.mp3",
-      "cover": "covers/34-cathedrals-of-stardust.jpeg",
       "tags": [
         "Progressive Rock",
         "Rock",
@@ -660,16 +660,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Progressive Rock"
+      "cover": "covers/34-cathedrals-of-stardust.jpeg"
     },
     {
       "id": "sg35",
       "title": "THE APATHY CAGE",
       "genre": "Metal",
+      "style": "Metalcore",
       "language": "English",
       "album": "",
       "audio": "35-the-apathy-cage.mp3",
-      "cover": "covers/35-the-apathy-cage.jpeg",
       "tags": [
         "Metalcore",
         "Metal",
@@ -679,16 +679,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Metalcore"
+      "cover": "covers/35-the-apathy-cage.jpeg"
     },
     {
       "id": "sg36",
       "title": "RAVE FROM THE CAGE",
       "genre": "Metal",
+      "style": "Metalcore",
       "language": "English",
       "album": "",
       "audio": "36-rave-from-the-cage.mp3",
-      "cover": "covers/36-rave-from-the-cage.jpeg",
       "tags": [
         "Metalcore",
         "Metal",
@@ -698,16 +698,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Metalcore"
+      "cover": "covers/36-rave-from-the-cage.jpeg"
     },
     {
       "id": "sg37",
       "title": "WILD RADICAL",
       "genre": "Rock",
+      "style": "Hard Rock",
       "language": "English",
       "album": "",
       "audio": "37-wild-radical.mp3",
-      "cover": "covers/37-wild-radical.jpeg",
       "tags": [
         "Hard Rock",
         "Rock",
@@ -717,16 +717,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Hard Rock"
+      "cover": "covers/37-wild-radical.jpeg"
     },
     {
       "id": "sg38",
       "title": "THE ABSOLUTE APEX",
       "genre": "Rock",
+      "style": "Progressive Rock",
       "language": "English",
       "album": "",
       "audio": "38-the-absolute-apex.mp3",
-      "cover": "covers/38-the-absolute-apex.jpeg",
       "tags": [
         "Progressive Rock",
         "Rock",
@@ -736,16 +736,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Progressive Rock"
+      "cover": "covers/38-the-absolute-apex.jpeg"
     },
     {
       "id": "sg39",
       "title": "DRIFTING BEYOND THE TOUCH",
       "genre": "Rock",
+      "style": "Post-Rock",
       "language": "English",
       "album": "",
       "audio": "39-drifting-beyond-the-touch.mp3",
-      "cover": "covers/39-drifting-beyond-the-touch.jpeg",
       "tags": [
         "Post-Rock",
         "Rock",
@@ -755,16 +755,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Post-Rock"
+      "cover": "covers/39-drifting-beyond-the-touch.jpeg"
     },
     {
       "id": "sg40",
       "title": "THE KINGDOM OF DAWN",
       "genre": "Rock",
+      "style": "Symphonic Rock",
       "language": "English",
       "album": "",
       "audio": "40-the-kingdom-of-dawn.mp3",
-      "cover": "covers/40-the-kingdom-of-dawn.jpeg",
       "tags": [
         "Symphonic Rock",
         "Rock",
@@ -774,16 +774,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Symphonic Rock"
+      "cover": "covers/40-the-kingdom-of-dawn.jpeg"
     },
     {
       "id": "sg41",
       "title": "THE REUNION CHRONICLES",
       "genre": "Metal",
+      "style": "Progressive Metal",
       "language": "English",
       "album": "",
       "audio": "41-the-reunion-chronicles.mp3",
-      "cover": "covers/41-the-reunion-chronicles.jpeg",
       "tags": [
         "Progressive Metal",
         "Metal",
@@ -793,16 +793,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Progressive Metal"
+      "cover": "covers/41-the-reunion-chronicles.jpeg"
     },
     {
       "id": "sg42",
       "title": "THE GRAVITY OF LATENT ORBITS",
       "genre": "Rock",
+      "style": "Post-Rock",
       "language": "English",
       "album": "",
       "audio": "42-the-gravity-of-latent-orbits.mp3",
-      "cover": "covers/42-the-gravity-of-latent-orbits.jpeg",
       "tags": [
         "Post-Rock",
         "Rock",
@@ -812,16 +812,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T10:34:00+02:00",
-      "style": "Post-Rock"
+      "cover": "covers/42-the-gravity-of-latent-orbits.jpeg"
     },
     {
       "id": "sg43",
       "title": "PÁJAROS DE CRISTAL (LA INFANCIA OLVIDADA)",
       "genre": "Rock",
+      "style": "Symphonic Rock",
       "language": "Spanish",
       "album": "",
       "audio": "43-pajaros-de-cristal-la-infancia-olvidada.mp3",
-      "cover": "covers/43-pajaros-de-cristal-la-infancia-olvidada.jpeg",
       "tags": [
         "Symphonic Rock",
         "Rock",
@@ -831,16 +831,16 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T11:42:00+02:00",
-      "style": "Symphonic Rock"
+      "cover": "covers/43-pajaros-de-cristal-la-infancia-olvidada.jpeg"
     },
     {
       "id": "sg44",
       "title": "EL ARTE DE DESAPARECER",
       "genre": "Pop",
+      "style": "Orchestral Pop",
       "language": "Spanish",
       "album": "",
       "audio": "44-el-arte-de-desaparecer.mp3",
-      "cover": "covers/44-el-arte-de-desaparecer.jpeg",
       "tags": [
         "Orchestral Pop",
         "Pop",
@@ -850,7 +850,7 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-27T11:42:00+02:00",
-      "style": "Orchestral Pop"
+      "cover": "covers/44-el-arte-de-desaparecer.jpeg"
     },
     {
       "id": "sg45",
@@ -860,7 +860,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "45-la-noche-no-sabe-contar.mp3",
-      "cover": "covers/45-la-noche-no-sabe-contar.jpeg",
       "tags": [
         "Pop Rock",
         "Rock",
@@ -869,7 +868,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-08-29T01:10:00+02:00"
+      "addedAt": "2026-08-29T01:10:00+02:00",
+      "cover": "covers/45-la-noche-no-sabe-contar.jpeg"
     },
     {
       "id": "sg46",
@@ -879,7 +879,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "46-fuego-en-el-colchon.mp3",
-      "cover": "covers/46-fuego-en-el-colchon.jpeg",
       "tags": [
         "Garage Rock",
         "Rock",
@@ -888,7 +887,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-08-29T01:10:00+02:00"
+      "addedAt": "2026-08-29T01:10:00+02:00",
+      "cover": "covers/46-fuego-en-el-colchon.jpeg"
     },
     {
       "id": "sg47",
@@ -898,7 +898,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "47-donde-el-amor-vence.mp3",
-      "cover": "covers/47-donde-el-amor-vence.jpeg",
       "tags": [
         "Orchestral Pop",
         "Pop",
@@ -907,16 +906,17 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-08-29T01:10:00+02:00"
+      "addedAt": "2026-08-29T01:10:00+02:00",
+      "cover": "covers/47-donde-el-amor-vence.jpeg"
     },
     {
       "id": "sg48",
       "title": "ESPAÑA EN MODO AVIÓN",
       "genre": "Rock",
+      "style": "Rap Rock",
       "language": "Spanish",
       "album": "",
       "audio": "48-espana-en-modo-avion.mp3",
-      "cover": "covers/48-espana-en-modo-avion.jpeg",
       "tags": [
         "Rap Rock",
         "Rock",
@@ -927,7 +927,7 @@
       "isNew": true,
       "lyrics": "",
       "addedAt": "2026-08-29T03:51:00+02:00",
-      "style": "Rap Rock"
+      "cover": "covers/48-espana-en-modo-avion.jpeg"
     },
     {
       "id": "sg49",
@@ -937,7 +937,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "49-no-deslices-el-corazon.mp3",
-      "cover": "covers/49-no-deslices-el-corazon.jpeg",
       "tags": [
         "Pop Rock",
         "Pop",
@@ -947,7 +946,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-08-29T10:55:00+02:00"
+      "addedAt": "2026-08-29T10:55:00+02:00",
+      "cover": "covers/49-no-deslices-el-corazon.jpeg"
     },
     {
       "id": "sg50",
@@ -957,7 +957,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "50-la-vida-en-modo-turbo.mp3",
-      "cover": "covers/50-la-vida-en-modo-turbo.jpeg",
       "tags": [
         "Ska Punk",
         "Rock",
@@ -967,7 +966,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-08-29T10:55:00+02:00"
+      "addedAt": "2026-08-29T10:55:00+02:00",
+      "cover": "covers/50-la-vida-en-modo-turbo.jpeg"
     },
     {
       "id": "sg51",
@@ -977,7 +977,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "51-la-tierra-nos-esta-hablando.mp3",
-      "cover": "covers/51-la-tierra-nos-esta-hablando.jpeg",
       "tags": [
         "Rap Rock",
         "Rock",
@@ -987,7 +986,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-08-29T10:55:00+02:00"
+      "addedAt": "2026-08-29T10:55:00+02:00",
+      "cover": "covers/51-la-tierra-nos-esta-hablando.jpeg"
     },
     {
       "id": "sg52",
@@ -997,7 +997,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "52-el-sistema-me-hizo-asi.mp3",
-      "cover": "covers/52-el-sistema-me-hizo-asi.jpeg",
       "tags": [
         "Alternative Rock",
         "Rock",
@@ -1007,7 +1006,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-08-29T11:39:00+02:00"
+      "addedAt": "2026-08-29T11:39:00+02:00",
+      "cover": "covers/52-el-sistema-me-hizo-asi.jpeg"
     },
     {
       "id": "sg53",
@@ -1017,7 +1017,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "53-que-se-pare-el-reloj.mp3",
-      "cover": "covers/53-que-se-pare-el-reloj.jpeg",
       "tags": [
         "Hard Rock",
         "Rock",
@@ -1027,7 +1026,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-09-08T21:23:00+02:00"
+      "addedAt": "2026-09-08T21:23:00+02:00",
+      "cover": "covers/53-que-se-pare-el-reloj.jpeg"
     },
     {
       "id": "sg54",
@@ -1037,7 +1037,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "54-cronofagia-la-rebelion-del-automata.mp3",
-      "cover": "covers/54-cronofagia-la-rebelion-del-automata.jpeg",
       "tags": [
         "Pop Punk",
         "Rock",
@@ -1047,7 +1046,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-09-08T21:23:00+02:00"
+      "addedAt": "2026-09-08T21:23:00+02:00",
+      "cover": "covers/54-cronofagia-la-rebelion-del-automata.jpeg"
     },
     {
       "id": "sg55",
@@ -1057,7 +1057,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "55-ultima-vez-en-linea.mp3",
-      "cover": "covers/55-ultima-vez-en-linea.jpeg",
       "tags": [
         "Pop Rock",
         "Pop",
@@ -1067,7 +1066,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-09-08T21:23:00+02:00"
+      "addedAt": "2026-09-08T21:23:00+02:00",
+      "cover": "covers/55-ultima-vez-en-linea.jpeg"
     },
     {
       "id": "sg56",
@@ -1077,7 +1077,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "56-donde-aprendi-a-ser.mp3",
-      "cover": "covers/56-donde-aprendi-a-ser.jpeg",
       "tags": [
         "Flamenco House",
         "Electronic",
@@ -1088,7 +1087,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-09-09T00:13:00+02:00"
+      "addedAt": "2026-09-09T00:13:00+02:00",
+      "cover": "covers/56-donde-aprendi-a-ser.jpeg"
     },
     {
       "id": "sg57",
@@ -1098,7 +1098,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "57-el-fuego-bajo-el-asfalto.mp3",
-      "cover": "covers/57-el-fuego-bajo-el-asfalto.jpeg",
       "tags": [
         "Flamenco Tech House",
         "Electronic",
@@ -1109,7 +1108,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-09-09T00:13:00+02:00"
+      "addedAt": "2026-09-09T00:13:00+02:00",
+      "cover": "covers/57-el-fuego-bajo-el-asfalto.jpeg"
     },
     {
       "id": "sg58",
@@ -1119,7 +1119,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "58-donde-el-verano-se-queda.mp3",
-      "cover": "covers/58-donde-el-verano-se-queda.jpeg",
       "tags": [
         "Melodic Rock",
         "Rock",
@@ -1130,7 +1129,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-09-16T23:27:00+02:00"
+      "addedAt": "2026-09-16T23:27:00+02:00",
+      "cover": "covers/58-donde-el-verano-se-queda.jpeg"
     },
     {
       "id": "sg59",
@@ -1140,7 +1140,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "59-donde-termina-el-miedo.mp3",
-      "cover": "covers/59-donde-termina-el-miedo.jpeg",
       "tags": [
         "Hard Rock",
         "Rock",
@@ -1151,7 +1150,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-09-16T23:27:00+02:00"
+      "addedAt": "2026-09-16T23:27:00+02:00",
+      "cover": "covers/59-donde-termina-el-miedo.jpeg"
     },
     {
       "id": "sg60",
@@ -1161,7 +1161,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "60-locos-pero-lucidos.mp3",
-      "cover": "covers/60-locos-pero-lucidos.jpeg",
       "tags": [
         "Latin Pop",
         "Latin",
@@ -1172,7 +1171,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-09-16T23:27:00+02:00"
+      "addedAt": "2026-09-16T23:27:00+02:00",
+      "cover": "covers/60-locos-pero-lucidos.jpeg"
     },
     {
       "id": "sg61",
@@ -1182,7 +1182,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "61-laberinto-de-seda.mp3",
-      "cover": "covers/61-laberinto-de-seda.jpeg",
       "tags": [
         "Pop Rock",
         "Rock",
@@ -1193,7 +1192,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-09-17T00:31:00+02:00"
+      "addedAt": "2026-09-17T00:31:00+02:00",
+      "cover": "covers/61-laberinto-de-seda.jpeg"
     },
     {
       "id": "sg62",
@@ -1203,7 +1203,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "62-la-distancia-entre-dos-puntos.mp3",
-      "cover": "covers/62-la-distancia-entre-dos-puntos.jpeg",
       "tags": [
         "Alternative Pop",
         "Pop",
@@ -1214,7 +1213,8 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-09-25T18:53:00+02:00"
+      "addedAt": "2026-09-25T18:53:00+02:00",
+      "cover": "covers/62-la-distancia-entre-dos-puntos.jpeg"
     },
     {
       "id": "sg63",
@@ -1224,7 +1224,6 @@
       "language": "Spanish",
       "album": "",
       "audio": "63-la-inercia-del-gris.mp3",
-      "cover": "covers/63-la-inercia-del-gris.jpeg",
       "tags": [
         "Indie Pop",
         "Pop",
@@ -1235,7 +1234,184 @@
       ],
       "isNew": true,
       "lyrics": "",
-      "addedAt": "2026-09-25T18:53:00+02:00"
+      "addedAt": "2026-09-25T18:53:00+02:00",
+      "cover": "covers/63-la-inercia-del-gris.jpeg"
+    },
+    {
+      "id": "sg64",
+      "title": "CATEDRAL DE FUEGO",
+      "genre": "Soul-Blues",
+      "style": "Soul-Blues",
+      "language": "Spanish",
+      "album": "",
+      "audio": "64-catedral-de-fuego.mp3",
+      "cover": "covers/64-catedral-de-fuego.jpeg",
+      "tags": [
+        "Soul-Blues",
+        "Soul",
+        "Blues",
+        "Gospel",
+        "Órgano Hammond",
+        "Potente",
+        "Espiritual"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-10-01T19:33:00+02:00"
+    },
+    {
+      "id": "sg65",
+      "title": "DONDE EL ALMA VUELVE A FLORECER",
+      "genre": "Latin",
+      "style": "Latin Pop",
+      "language": "Spanish",
+      "album": "",
+      "audio": "65-donde-el-alma-vuelve-a-florecer.mp3",
+      "cover": "covers/65-donde-el-alma-vuelve-a-florecer.jpeg",
+      "tags": [
+        "Latin Pop",
+        "Latin",
+        "Balada",
+        "Guitarra española",
+        "Piano",
+        "Dueto",
+        "Emocional"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-10-01T19:33:00+02:00"
+    },
+    {
+      "id": "sg66",
+      "title": "EL BAILE DE LAS SOMBRAS VÍAS",
+      "genre": "Rock",
+      "style": "Alternative Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "66-el-baile-de-las-sombras-vias.mp3",
+      "cover": "covers/66-el-baile-de-las-sombras-vias.jpeg",
+      "tags": [
+        "Alternative Rock",
+        "Rock",
+        "Crítica social",
+        "Melódico",
+        "Guitarra eléctrica",
+        "Dúo",
+        "Intenso"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-10-01T19:33:00+02:00"
+    },
+    {
+      "id": "sg67",
+      "title": "EL ECLIPSE DEL SILENCIO",
+      "genre": "Rock",
+      "style": "Hard Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "67-el-eclipse-del-silencio.mp3",
+      "cover": "covers/67-el-eclipse-del-silencio.jpeg",
+      "tags": [
+        "Hard Rock",
+        "Rock",
+        "Oscuro",
+        "Melódico",
+        "Guitarra eléctrica",
+        "Intenso",
+        "Atmosférico"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-10-01T19:33:00+02:00"
+    },
+    {
+      "id": "sg68",
+      "title": "EL HORMIGÓN Y LA MEMORIA",
+      "genre": "Rock",
+      "style": "Symphonic Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "68-el-hormigon-y-la-memoria.mp3",
+      "cover": "covers/68-el-hormigon-y-la-memoria.jpeg",
+      "tags": [
+        "Symphonic Rock",
+        "Rock",
+        "Orquestal",
+        "Cuerdas",
+        "Nostálgico",
+        "Épico",
+        "Emocional"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-10-01T19:33:00+02:00"
+    },
+    {
+      "id": "sg69",
+      "title": "EL MANUAL DEL FUGITIVO",
+      "genre": "Rock",
+      "style": "Rumba Rock",
+      "language": "Spanish",
+      "album": "",
+      "audio": "69-el-manual-del-fugitivo.mp3",
+      "cover": "covers/69-el-manual-del-fugitivo.jpeg",
+      "tags": [
+        "Rumba Rock",
+        "Rock",
+        "Rumba",
+        "Guitarra española",
+        "Canalla",
+        "Enérgico",
+        "Festivo"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-10-01T19:33:00+02:00"
+    },
+    {
+      "id": "sg70",
+      "title": "GRIETAS EN LA NIEBLA",
+      "genre": "Metal",
+      "style": "Alternative Metal",
+      "language": "Spanish",
+      "album": "",
+      "audio": "70-grietas-en-la-niebla.mp3",
+      "cover": "covers/70-grietas-en-la-niebla.jpeg",
+      "tags": [
+        "Alternative Metal",
+        "Metal",
+        "Oscuro",
+        "Guitarras pesadas",
+        "Intenso",
+        "Melódico",
+        "Atmosférico"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-10-01T19:33:00+02:00"
+    },
+    {
+      "id": "sg71",
+      "title": "LA CARTOGRAFÍA DEL CORAZÓN",
+      "genre": "Latin",
+      "style": "Latin Pop",
+      "language": "Spanish",
+      "album": "",
+      "audio": "71-la-cartografia-del-corazon.mp3",
+      "cover": "covers/71-la-cartografia-del-corazon.jpeg",
+      "tags": [
+        "Latin Pop",
+        "Latin",
+        "Pop urbano",
+        "Melódico",
+        "Electrónico",
+        "Emocional",
+        "Rítmico"
+      ],
+      "isNew": true,
+      "lyrics": "",
+      "addedAt": "2026-10-01T19:33:00+02:00"
     }
   ]
 }
